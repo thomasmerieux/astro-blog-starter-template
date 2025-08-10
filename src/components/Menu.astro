@@ -183,7 +183,17 @@ const { lang = 'en', t } = Astro.props;
         // Close menu when clicking on links
         const mobileLinks = mobileMenu?.querySelectorAll('a');
         mobileLinks?.forEach(link => {
-            link.addEventListener('click', closeMenu);
+            link.addEventListener('click', (e) => {
+                // Always close the menu immediately when a link is clicked
+                closeMenu();
+                // Force menu to be closed after a short delay to handle same-page navigation
+                setTimeout(() => {
+                    if (mobileMenu && !mobileMenu.classList.contains('-translate-x-full')) {
+                        closeMenu();
+                    }
+                }, 100);
+                // Allow the default navigation to proceed
+            });
         });
 
         // Handle mobile language buttons
