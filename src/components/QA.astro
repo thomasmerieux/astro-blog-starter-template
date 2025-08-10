@@ -1,0 +1,30 @@
+---
+import PageWrapper from './PageWrapper.astro';
+
+const { lang = 'en', t } = Astro.props;
+---
+
+<PageWrapper title={t("qa.title")} lang={lang} t={t}>
+  <div class="w-full max-w-4xl">
+    <div class="space-y-12">
+      <!-- Q&A Item 1 -->
+      <div class="space-y-4">
+        <h3 class="text-xl font-normal text-gray-900">{t("qa.questions.parking.question")}</h3>
+        <p class="text-gray-600 font-normal leading-relaxed max-w-3xl">{t("qa.questions.parking.answer")}</p>
+      </div>
+
+      <!-- Q&A Item 2 -->
+      <div class="space-y-4">
+        <h3 class="text-xl font-normal text-gray-900">{t("qa.questions.children.question")}</h3>
+        <p class="text-gray-600 font-normal leading-relaxed max-w-3xl">{t("qa.questions.children.answer")}</p>
+      </div>
+
+      <!-- Q&A Item 3 -->
+      <div class="space-y-4">
+        <h3 class="text-xl font-normal text-gray-900">{t("qa.questions.dresscode.question")}</h3>
+        <p class="text-gray-600 font-normal leading-relaxed max-w-3xl">{t("qa.questions.dresscode.answer")}</p>
+      </div>
+
+    </div>
+  </div>
+</PageWrapper>

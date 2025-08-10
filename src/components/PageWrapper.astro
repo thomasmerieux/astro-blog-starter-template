@@ -1,0 +1,35 @@
+---
+import Menu from './Menu.astro';
+
+export interface Props {
+  title?: string;
+  lang?: string;
+  t?: any;
+}
+
+const { title, lang = 'en', t } = Astro.props;
+---
+
+<div class="min-h-screen flex flex-col">
+  <!-- Menu - fixed at top -->
+  <header class="flex-shrink-0">
+    <Menu lang={lang} t={t} />
+  </header>
+  
+  <!-- Main content area -->
+  <main class="flex-1 flex flex-col p-8">
+    {title && (
+      <!-- Page Title -->
+      <div class="text-center mb-12 sm:mb-20 flex-shrink-0">
+        <h1 class="text-gray-800 uppercase tracking-wider font-normal text-2xl sm:text-4xl" style="letter-spacing: 4px;">
+          {title}
+        </h1>
+      </div>
+    )}
+    
+    <!-- Page Content -->
+    <div class="flex-1 flex justify-center">
+      <slot />
+    </div>
+  </main>
+</div>

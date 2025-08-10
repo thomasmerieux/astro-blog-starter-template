@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RSVP from '../components/RSVP.astro';
+import { useTranslations } from '../i18n/utils';
+
+const lang = 'en';
+const t = useTranslations(lang);
+const pageTitle = `${t('rsvp.title')} - DANA & THOMAS`;
+---
+
+<BaseLayout title={pageTitle} lang={lang}>
+  <RSVP lang={lang} t={t} />
+</BaseLayout>

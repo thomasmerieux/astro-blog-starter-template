@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RSVP from '../../components/RSVP.astro';
+import { useTranslations, type Languages } from '../../i18n/utils';
+import { languages } from '../../i18n/ui';
+
+export async function getStaticPaths() {
+  return Object.keys(languages).map(lang => ({
+    params: { lang }
+  }));
+}
+
+const { lang } = Astro.params as { lang: Languages };
+const t = useTranslations(lang);
+
+const pageTitle = `${t('rsvp.title')} - DANA & THOMAS`;
+---
+
+<BaseLayout title={pageTitle} lang={lang}>
+  <RSVP lang={lang} t={t} />
+</BaseLayout>

@@ -1,0 +1,95 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import '../styles/global.css';
+import Menu from '../components/Menu.astro';
+import type { Languages } from '../i18n/ui';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  lang?: Languages;
+  t?: any;
+}
+
+const { 
+  title = "DANA & THOMAS",
+  description = "Wedding website for DANA & THOMAS - September 20th, 2025",
+  lang = "en",
+  t
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <ViewTransitions />
+    
+    <style>
+      .bg-svg {
+        background-image: url('./../assets/background.svg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+    </style>
+    
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap"></noscript>
+  </head>
+  <body class="bg-svg">
+    <div class="min-h-screen flex flex-col">
+      <!-- Menu - fixed at top -->
+      <header class="flex-shrink-0">
+        <Menu lang={lang} t={t} />
+      </header>
+      
+      <!-- Home content - vertically centered with no title -->
+      <main class="flex-1 flex items-center justify-center">
+        <slot />
+      </main>
+    </div>
+    
+    <!-- Language switching script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const selector = document.getElementById('language-selector');
+        if (!selector) return;
+        
+        selector.addEventListener('change', function(e) {
+          const selectedLang = e.target.value;
+          const currentPath = window.location.pathname;
+          
+          // Extract the current page from path
+          let currentPage = '';
+          if (currentPath.includes('/schedule')) currentPage = 'schedule';
+          else if (currentPath.includes('/venue')) currentPage = 'venue';
+          else if (currentPath.includes('/accommodation')) currentPage = 'accommodation';
+          else if (currentPath.includes('/qa')) currentPage = 'qa';
+          else if (currentPath.includes('/rsvp')) currentPage = 'rsvp';
+          
+          // Build new URL and force full page reload
+          if (selectedLang === 'en') {
+            if (currentPage) {
+              window.location.replace(`/${currentPage}`);
+            } else {
+              window.location.replace('/');
+            }
+          } else {
+            if (currentPage) {
+              window.location.replace(`/${selectedLang}/${currentPage}`);
+            } else {
+              window.location.replace(`/${selectedLang}/`);
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

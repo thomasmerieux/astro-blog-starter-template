@@ -1,0 +1,158 @@
+---
+import type { Languages } from '../i18n/ui';
+
+export interface Props {
+  lang?: Languages;
+  t?: any;
+}
+
+const { lang = 'en', t } = Astro.props;
+---
+
+<nav class="relative flex items-center w-full px-4 sm:px-8 py-4 border-b border-gray-200">
+  <!-- Mobile Menu Button -->
+  <button id="mobile-menu-toggle" class="md:hidden flex flex-col space-y-1 mr-4">
+    <span class="w-6 h-0.5 bg-gray-800 transition-transform duration-300"></span>
+    <span class="w-6 h-0.5 bg-gray-800 transition-opacity duration-300"></span>
+    <span class="w-6 h-0.5 bg-gray-800 transition-transform duration-300"></span>
+  </button>
+
+  <!-- Desktop Navigation Links (absolutely centered) -->
+  <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2">
+    <ul class="flex space-x-6">
+      <li>
+        <a href={lang === 'en' ? '/' : `/${lang}/`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide">
+          {t("nav.home")}
+        </a>
+      </li>
+      <li>
+        <a href={lang === 'en' ? '/schedule' : `/${lang}/schedule`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide">
+          {t("nav.schedule")}
+        </a>
+      </li>
+      <li>
+        <a href={lang === 'en' ? '/venue' : `/${lang}/venue`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide">
+          {t("nav.venue")}
+        </a>
+      </li>
+      <li>
+        <a href={lang === 'en' ? '/accommodation' : `/${lang}/accommodation`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide">
+          {t("nav.accommodation")}
+        </a>
+      </li>
+      <li>
+        <a href={lang === 'en' ? '/qa' : `/${lang}/qa`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide">
+          {t("nav.qa")}
+        </a>
+      </li>
+      <li>
+        <a href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide">
+          {t("nav.rsvp")}
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+  <!-- Language Selector (positioned to the right) -->
+  <div class="ml-auto">
+    <select id="language-selector" class="bg-transparent border border-gray-300 px-2 py-1 text-sm focus:outline-none focus:border-gray-500">
+      <option value="en" selected={lang === 'en'}>EN</option>
+      <option value="fr" selected={lang === 'fr'}>FR</option>
+      <option value="ro" selected={lang === 'ro'}>RO</option>
+    </select>
+  </div>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobile-menu" class="fixed inset-0 bg-white z-50 transform -translate-x-full transition-transform duration-300 md:hidden">
+  <div class="flex flex-col h-full">
+    <!-- Mobile Menu Header -->
+    <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200">
+      <span class="text-xl font-normal uppercase tracking-wide">Menu</span>
+      <button id="mobile-menu-close" class="p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Mobile Menu Links -->
+    <nav class="flex-1 px-4 py-8">
+      <ul class="space-y-8">
+        <li>
+          <a href={lang === 'en' ? '/' : `/${lang}/`} class="block text-2xl hover:text-gray-600 transition-colors uppercase tracking-wide">
+            {t("nav.home")}
+          </a>
+        </li>
+        <li>
+          <a href={lang === 'en' ? '/schedule' : `/${lang}/schedule`} class="block text-2xl hover:text-gray-600 transition-colors uppercase tracking-wide">
+            {t("nav.schedule")}
+          </a>
+        </li>
+        <li>
+          <a href={lang === 'en' ? '/venue' : `/${lang}/venue`} class="block text-2xl hover:text-gray-600 transition-colors uppercase tracking-wide">
+            {t("nav.venue")}
+          </a>
+        </li>
+        <li>
+          <a href={lang === 'en' ? '/accommodation' : `/${lang}/accommodation`} class="block text-2xl hover:text-gray-600 transition-colors uppercase tracking-wide">
+            {t("nav.accommodation")}
+          </a>
+        </li>
+        <li>
+          <a href={lang === 'en' ? '/qa' : `/${lang}/qa`} class="block text-2xl hover:text-gray-600 transition-colors uppercase tracking-wide">
+            {t("nav.qa")}
+          </a>
+        </li>
+        <li>
+          <a href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`} class="block text-2xl hover:text-gray-600 transition-colors uppercase tracking-wide">
+            {t("nav.rsvp")}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileMenuClose = document.getElementById('mobile-menu-close');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const toggleIcon = mobileMenuToggle?.children;
+
+    function openMenu() {
+      mobileMenu?.classList.remove('-translate-x-full');
+      if (toggleIcon) {
+        toggleIcon[0]?.classList.add('rotate-45', 'translate-y-1.5');
+        toggleIcon[1]?.classList.add('opacity-0');
+        toggleIcon[2]?.classList.add('-rotate-45', '-translate-y-1.5');
+      }
+    }
+
+    function closeMenu() {
+      mobileMenu?.classList.add('-translate-x-full');
+      if (toggleIcon) {
+        toggleIcon[0]?.classList.remove('rotate-45', 'translate-y-1.5');
+        toggleIcon[1]?.classList.remove('opacity-0');
+        toggleIcon[2]?.classList.remove('-rotate-45', '-translate-y-1.5');
+      }
+    }
+
+    mobileMenuToggle?.addEventListener('click', () => {
+      if (mobileMenu?.classList.contains('-translate-x-full')) {
+        openMenu();
+      } else {
+        closeMenu();
+      }
+    });
+
+    mobileMenuClose?.addEventListener('click', closeMenu);
+
+    // Close menu when clicking on links
+    const mobileLinks = mobileMenu?.querySelectorAll('a');
+    mobileLinks?.forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+  });
+</script>

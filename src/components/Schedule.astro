@@ -1,0 +1,69 @@
+---
+import PageWrapper from './PageWrapper.astro';
+import type { Languages } from '../i18n/ui';
+
+export interface Props {
+  lang?: Languages;
+  t?: any;
+}
+
+const { lang = 'en', t } = Astro.props;
+---
+
+<PageWrapper title={t("schedule.title")} lang={lang} t={t}>
+  <div class="w-full max-w-4xl">
+    <div class="space-y-12">
+      <!-- Schedule Item 1 -->
+      <div class="flex items-start">
+        <div class="w-1/3 text-right pr-8">
+          <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.arrival.fulldate")}</div>
+          <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.arrival.date")}</div>
+        </div>
+        <div class="w-0.5 h-20" style="background-color: #428bb0; width: 2px;"></div>
+        <div class="w-2/3 pl-8">
+          <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.arrival.title")}</div>
+          <div class="text-gray-600 font-normal">{t("schedule.events.arrival.description")}</div>
+        </div>
+      </div>
+
+      <!-- Schedule Item 2 -->
+      <div class="flex items-start">
+        <div class="w-1/3 text-right pr-8">
+          <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.dinner.fulldate")}</div>
+          <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.dinner.date")}</div>
+        </div>
+        <div class="w-0.5 h-20" style="background-color: #428bb0; width: 2px;"></div>
+        <div class="w-2/3 pl-8">
+          <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.dinner.title")}</div>
+          <div class="text-gray-600 font-normal">{t("schedule.events.dinner.description")}</div>
+        </div>
+      </div>
+
+      <!-- Schedule Item 3 -->
+      <div class="flex items-start">
+        <div class="w-1/3 text-right pr-8">
+          <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.dance.fulldate")}</div>
+          <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.dance.date")}</div>
+        </div>
+        <div class="w-0.5 h-20" style="background-color: #428bb0; width: 2px;"></div>
+        <div class="w-2/3 pl-8">
+          <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.dance.title")}</div>
+          <div class="text-gray-600 font-normal">{t("schedule.events.dance.description")}</div>
+        </div>
+      </div>
+
+      <!-- Schedule Item 4 -->
+      <div class="flex items-start">
+        <div class="w-1/3 text-right pr-8">
+          <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.brunch.fulldate")}</div>
+          <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.brunch.date")}</div>
+        </div>
+        <div class="w-0.5 h-20" style="background-color: #428bb0; width: 2px;"></div>
+        <div class="w-2/3 pl-8">
+          <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.brunch.title")}</div>
+          <div class="text-gray-600 font-normal">{t("schedule.events.brunch.description")}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</PageWrapper>

@@ -1,0 +1,16 @@
+---
+import HomeLayout from './HomeLayout.astro';
+import Home from '../components/Home.astro';
+import type { Languages } from '../i18n/ui';
+
+export interface Props {
+  lang?: Languages;
+  t?: any;
+}
+
+const { lang = 'en', t } = Astro.props;
+---
+
+<HomeLayout title="DANA & THOMAS" lang={lang} t={t}>
+  <Home lang={lang} t={t} />
+</HomeLayout>

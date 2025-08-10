@@ -1,0 +1,107 @@
+---
+import PageWrapper from './PageWrapper.astro';
+
+const { lang = 'en', t } = Astro.props;
+---
+
+<PageWrapper title={t("accommodation.title")} lang={lang} t={t}>
+  <div class="w-full max-w-6xl">
+    <!-- Desktop Layout -->
+    <div class="hidden md:flex gap-4 h-[28rem]">
+      <!-- Large Hotel Card (2/3 width) -->
+      <div class="flex-2 relative overflow-hidden group cursor-pointer" style="flex: 2;">
+        <img 
+          src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop" 
+          alt="Grand Bucharest Hotel" 
+          class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+        />
+        <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent group-hover:opacity-0 transition-opacity duration-300">
+          <h3 class="text-white text-2xl font-normal">Grand Bucharest Hotel</h3>
+        </div>
+        <!-- Hover overlay -->
+        <div class="absolute inset-0 bg-black/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <div class="text-center text-white p-8">
+            <h3 class="text-2xl font-normal mb-4">Grand Bucharest Hotel</h3>
+            <p class="text-gray-300 mb-4 leading-relaxed">Luxury 5-star hotel in the heart of Bucharest, just minutes from the venue. Features elegant rooms, spa facilities, and exceptional service.</p>
+            <p class="text-xl font-light mb-6">€200/night</p>
+            <a href="#" class="inline-block bg-white text-black px-6 py-2 font-normal hover:bg-gray-200 transition-colors">
+              Book Now
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Small Hotel Card (1/3 width) -->
+      <div class="flex-1 relative overflow-hidden group cursor-pointer">
+        <img 
+          src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=600&h=600&fit=crop" 
+          alt="Boutique Central" 
+          class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+        />
+        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent group-hover:opacity-0 transition-opacity duration-300">
+          <h3 class="text-white text-xl font-normal">Boutique Central</h3>
+        </div>
+        <!-- Hover overlay -->
+        <div class="absolute inset-0 bg-black/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <div class="text-center text-white p-6">
+            <h3 class="text-xl font-normal mb-3">Boutique Central</h3>
+            <p class="text-gray-300 mb-3 leading-relaxed text-sm">Charming boutique hotel with modern amenities and personalized service in Old Town.</p>
+            <p class="text-lg font-light mb-4">€120/night</p>
+            <a href="#" class="inline-block bg-white text-black px-4 py-2 text-sm font-normal hover:bg-gray-200 transition-colors">
+              Book Now
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Layout -->
+    <div class="md:hidden space-y-4">
+      <!-- Large Hotel Card -->
+      <div class="relative overflow-hidden group cursor-pointer h-64">
+        <img 
+          src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop" 
+          alt="Grand Bucharest Hotel" 
+          class="w-full h-full object-cover transition-opacity duration-300 group-active:opacity-0"
+        />
+        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent group-active:opacity-0 transition-opacity duration-300">
+          <h3 class="text-white text-xl font-normal">Grand Bucharest Hotel</h3>
+        </div>
+        <!-- Touch overlay -->
+        <div class="absolute inset-0 bg-black/90 opacity-0 group-active:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <div class="text-center text-white p-6">
+            <h3 class="text-xl font-normal mb-3">Grand Bucharest Hotel</h3>
+            <p class="text-gray-300 mb-3 leading-relaxed text-sm">Luxury 5-star hotel in the heart of Bucharest, just minutes from the venue. Features elegant rooms, spa facilities, and exceptional service.</p>
+            <p class="text-lg font-light mb-4">€200/night</p>
+            <a href="#" class="inline-block bg-white text-black px-4 py-2 text-sm font-normal">
+              Book Now
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Small Hotel Card -->
+      <div class="relative overflow-hidden group cursor-pointer h-64">
+        <img 
+          src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=600&h=600&fit=crop" 
+          alt="Boutique Central" 
+          class="w-full h-full object-cover transition-opacity duration-300 group-active:opacity-0"
+        />
+        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent group-active:opacity-0 transition-opacity duration-300">
+          <h3 class="text-white text-xl font-normal">Boutique Central</h3>
+        </div>
+        <!-- Touch overlay -->
+        <div class="absolute inset-0 bg-black/90 opacity-0 group-active:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <div class="text-center text-white p-6">
+            <h3 class="text-xl font-normal mb-3">Boutique Central</h3>
+            <p class="text-gray-300 mb-3 leading-relaxed text-sm">Charming boutique hotel with modern amenities and personalized service in Old Town.</p>
+            <p class="text-lg font-light mb-4">€120/night</p>
+            <a href="#" class="inline-block bg-white text-black px-4 py-2 text-sm font-normal">
+              Book Now
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</PageWrapper>

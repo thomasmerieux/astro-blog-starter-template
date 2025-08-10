@@ -1,0 +1,83 @@
+<svg
+        class="absolute inset-0 w-full h-full object-cover"
+        viewBox="0 0 1200 800"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="xMidYMid slice"
+>
+    <defs>
+        <linearGradient id="floral1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.4"/>
+            <stop offset="50%" stop-color="#bae6fd" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#7dd3fc" stop-opacity="0.2"/>
+        </linearGradient>
+        <linearGradient id="floral2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f3e8ff" stop-opacity="0.4"/>
+            <stop offset="50%" stop-color="#e9d5ff" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#d8b4fe" stop-opacity="0.2"/>
+        </linearGradient>
+        <linearGradient id="sage" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f0fdf4" stop-opacity="0.4"/>
+            <stop offset="50%" stop-color="#dcfce7" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#bbf7d0" stop-opacity="0.2"/>
+        </linearGradient>
+    </defs>
+
+    <!-- Floating organic shapes -->
+    <path d="M100,200 Q200,150 300,200 T500,180 Q600,160 700,200 L680,350 Q580,320 480,340 T280,360 Q180,380 100,340 Z"
+          fill="url(#floral1)" opacity="0.6">
+        <animateTransform
+                attributeName="transform"
+                type="translate"
+                values="0,0; 10,5; 0,0"
+                dur="12s"
+                repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.4;0.7;0.4" dur="8s" repeatCount="indefinite"/>
+    </path>
+
+    <!-- Elegant curved shape -->
+    <path d="M800,100 Q900,80 1000,120 Q1100,140 1150,200 L1120,400 Q1020,350 920,380 Q820,410 780,350 Q750,290 800,200 Z"
+          fill="url(#floral2)" opacity="0.5">
+        <animateTransform
+                attributeName="transform"
+                type="translate"
+                values="0,0; -8,3; 0,0"
+                dur="10s"
+                repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.3;0.6;0.3" dur="9s" repeatCount="indefinite"/>
+    </path>
+
+    <!-- Flowing bottom shape -->
+    <path d="M0,500 Q200,450 400,480 T800,460 Q1000,440 1200,480 L1200,800 L0,800 Z"
+          fill="url(#sage)" opacity="0.4">
+        <animate attributeName="opacity" values="0.3;0.5;0.3" dur="7s" repeatCount="indefinite"/>
+    </path>
+
+    <!-- Delicate floating elements -->
+    <circle cx="300" cy="150" r="40" fill="url(#floral1)" opacity="0.3">
+        <animateTransform
+                attributeName="transform"
+                type="translate"
+                values="0,0; 5,-8; 0,0"
+                dur="15s"
+                repeatCount="indefinite"/>
+        <animate attributeName="r" values="35;45;35" dur="6s" repeatCount="indefinite"/>
+    </circle>
+
+    <circle cx="900" cy="300" r="30" fill="url(#floral2)" opacity="0.4">
+        <animateTransform
+                attributeName="transform"
+                type="translate"
+                values="0,0; -3,6; 0,0"
+                dur="11s"
+                repeatCount="indefinite"/>
+        <animate attributeName="r" values="25;35;25" dur="7s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- Subtle accent dots -->
+    <circle cx="150" cy="400" r="15" fill="url(#sage)" opacity="0.5">
+        <animate attributeName="opacity" values="0.3;0.7;0.3" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1050" cy="150" r="20" fill="url(#floral1)" opacity="0.4">
+        <animate attributeName="opacity" values="0.2;0.6;0.2" dur="8s" repeatCount="indefinite"/>
+    </circle>
+</svg>

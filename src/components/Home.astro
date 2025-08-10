@@ -1,0 +1,27 @@
+---
+import type { Languages } from '../i18n/ui';
+
+export interface Props {
+  lang?: Languages;
+  t?: any;
+}
+
+const { lang = 'en', t } = Astro.props;
+---
+
+<div class="text-black px-16 sm:px-4">
+  <div>
+    <h1 class="uppercase text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-justify sm:text-center" style="letter-spacing: 0.2em; font-weight: 400; line-height: 1.1;">{t("home.title")}</h1>
+    <div class="mt-4 sm:flex sm:justify-end sm:mr-3">
+      <p class="uppercase text-lg sm:text-xl text-justify sm:text-right" style="letter-spacing: 0.1em; font-weight: 400;">{t("home.date")}</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  @media (max-width: 639px) {
+    h1 {
+      line-height: 1.2 !important;
+    }
+  }
+</style>

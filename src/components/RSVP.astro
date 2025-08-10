@@ -1,0 +1,78 @@
+---
+import PageWrapper from './PageWrapper.astro';
+import type { Languages } from '../i18n/ui';
+
+export interface Props {
+  lang?: Languages;
+  t?: any;
+}
+
+const { lang = 'en', t } = Astro.props;
+---
+
+<PageWrapper title={t("rsvp.title")} lang={lang} t={t}>
+  <div class="w-full max-w-3xl">
+    <form class="space-y-6">
+      <!-- Name Fields -->
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="form-label">
+            {t("rsvp.form.firstName")}
+          </label>
+          <input type="text" class="form-input" required>
+        </div>
+        <div>
+          <label class="form-label">
+            {t("rsvp.form.lastName")}
+          </label>
+          <input type="text" class="form-input" required>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="form-label">
+          {t("rsvp.form.email")}
+        </label>
+        <input type="email" class="form-input" required>
+      </div>
+
+      <!-- Attendance -->
+      <div>
+        <label class="form-label">
+          {t("rsvp.form.attendance")}
+        </label>
+        <div class="flex gap-6">
+          <label class="flex items-center cursor-pointer">
+            <input type="radio" name="attendance" value="yes" class="form-radio">
+            <span class="ml-2 text-gray-700 font-normal">{t("rsvp.form.attendanceYes")}</span>
+          </label>
+          <label class="flex items-center cursor-pointer">
+            <input type="radio" name="attendance" value="no" class="form-radio">
+            <span class="ml-2 text-gray-700 font-normal">{t("rsvp.form.attendanceNo")}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Vegetarian Option -->
+      <div>
+        <label class="flex items-center cursor-pointer">
+          <input type="checkbox" name="vegetarian" class="form-checkbox">
+          <span class="ml-2 text-gray-900 font-normal">{t("rsvp.form.vegetarian")}</span>
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center pt-4">
+        <button type="submit" class="btn-primary">
+          {t("rsvp.form.submit")}
+        </button>
+      </div>
+    </form>
+
+    <!-- Deadline Notice -->
+    <div class="mt-8 text-center">
+      <p class="text-gray-500 font-normal">{t("rsvp.deadline")}</p>
+    </div>
+  </div>
+</PageWrapper>
