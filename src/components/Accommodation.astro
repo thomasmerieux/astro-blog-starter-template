@@ -1,6 +1,8 @@
 ---
 import PageWrapper from './PageWrapper.astro';
 import type { BaseComponentProps } from '../types';
+import hotelImage from '../assets/IMG_2727 2.jpeg';
+import hotel2Image from '../assets/IMG_2910.JPG';
 
 export interface Props extends BaseComponentProps {}
 
@@ -15,12 +17,12 @@ const { lang = 'en', t } = Astro.props;
       <div class="flex-2 relative overflow-hidden group cursor-pointer" style="flex: 2;" onclick="window.open('https://athinasuiteshotel.com/', '_blank')">
         <div class="flex h-full">
           <img 
-            src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop" 
+            src={hotelImage.src}
             alt="Athina Suites Hotel" 
             class="w-1/2 h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
           />
           <img 
-            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop" 
+            src={hotel2Image.src}
             alt="Athina Suites Hotel Interior" 
             class="w-1/2 h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
           />
@@ -63,7 +65,7 @@ const { lang = 'en', t } = Astro.props;
       <div class="relative overflow-hidden group cursor-pointer h-64" onclick="window.open('https://athinasuiteshotel.com/', '_blank')">
         <div class="flex h-full">
           <img 
-            src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop" 
+            src={hotelImage.src}
             alt="Athina Suites Hotel" 
             class="w-1/2 h-full object-cover transition-opacity duration-300 group-active:opacity-0"
           />

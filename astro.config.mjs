@@ -10,13 +10,15 @@ import cloudflare from "@astrojs/cloudflare";
 export default defineConfig({
   site: "https://example.com",
   integrations: [mdx(), sitemap(), tailwind()],
+  output: 'server',
   adapter: cloudflare({
     platformProxy: {
       enabled: true,
+      persist: true,
     },
   }),
-    i18n: {
-        defaultLocale: "en",
-        locales: ["en", "fr", "ro"]
-    }
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "fr", "ro"]
+  }
 });

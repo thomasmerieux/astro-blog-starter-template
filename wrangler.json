@@ -10,5 +10,17 @@
   "observability": {
     "enabled": true
   },
-  "upload_source_maps": true
+  "upload_source_maps": true,
+  "d1_databases": [
+    {
+      "binding": "DB-DEV",
+      "database_name": "dana-and-thomas-rsvp-dev",
+      "database_id": "2be7944c-1737-4683-a880-2e516087951b"
+    },
+    {
+      "binding": "DB",
+      "database_name": "dana-and-thomas-rsvp",
+      "database_id": "801256f5-10b6-4c46-a8fc-ccf9c6c00dcb"
+    }
+  ]
 }

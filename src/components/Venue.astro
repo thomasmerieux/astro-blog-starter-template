@@ -1,6 +1,7 @@
 ---
 import PageWrapper from './PageWrapper.astro';
 import type { BaseComponentProps } from '../types';
+import loftImage from '../assets/IMG_2727.jpeg';
 
 export interface Props extends BaseComponentProps {}
 
@@ -65,7 +66,7 @@ const { lang = 'en', t } = Astro.props;
         <!-- Venue Image -->
         <div class="aspect-[7/3] overflow-hidden bg-gray-200">
           <img 
-            src="https://images.unsplash.com/photo-1519167758481-83f29c8cb4f1?w=600&h=400&fit=crop" 
+            src={loftImage.src + '?w=600&h=400&fit=crop'}
             alt="Loft Diplomat Venue" 
             class="w-full h-full object-cover"
           />
