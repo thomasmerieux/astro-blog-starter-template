@@ -74,7 +74,7 @@ const { lang = 'en', t } = Astro.props;
 </nav>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobile-menu" class="fixed inset-0 bg-white z-50 transform -translate-x-full transition-transform duration-300 md:hidden">
+<div id="mobile-menu" class="fixed inset-0 bg-white z-50 hidden md:hidden">
     <div class="flex flex-col h-full">
         <!-- Mobile Menu Header -->
         <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200">
@@ -120,27 +120,6 @@ const { lang = 'en', t } = Astro.props;
                     </a>
                 </li>
             </ul>
-
-            <!-- Mobile Language Section -->
-            <div class="mt-12 pt-8 border-t border-gray-200">
-                <div class="flex items-center mb-4">
-                    <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 919-9"></path>
-                    </svg>
-                    <span class="text-lg font-medium text-gray-700 uppercase tracking-wide">Language</span>
-                </div>
-                <div class="space-y-3">
-                    <button id="mobile-lang-en" class="block w-full text-left py-3 px-4 text-lg transition-colors hover:bg-gray-100 ${lang === 'en' ? 'bg-gray-100 font-medium' : ''}" data-lang="en">
-                        English
-                    </button>
-                    <button id="mobile-lang-fr" class="block w-full text-left py-3 px-4 text-lg transition-colors hover:bg-gray-100 ${lang === 'fr' ? 'bg-gray-100 font-medium' : ''}" data-lang="fr">
-                        Français
-                    </button>
-                    <button id="mobile-lang-ro" class="block w-full text-left py-3 px-4 text-lg transition-colors hover:bg-gray-100 ${lang === 'ro' ? 'bg-gray-100 font-medium' : ''}" data-lang="ro">
-                        Română
-                    </button>
-                </div>
-            </div>
         </nav>
     </div>
 </div>
@@ -151,9 +130,15 @@ const { lang = 'en', t } = Astro.props;
         const mobileMenuClose = document.getElementById('mobile-menu-close');
         const mobileMenu = document.getElementById('mobile-menu');
         const toggleIcon = mobileMenuToggle?.children;
+        
+        let isMenuOpen = false;
 
         function openMenu() {
-            mobileMenu?.classList.remove('-translate-x-full');
+            if (!mobileMenu) return;
+            mobileMenu.classList.remove('hidden');
+            isMenuOpen = true;
+            
+            // Animate hamburger to X
             if (toggleIcon) {
                 toggleIcon[0]?.classList.add('rotate-45', 'translate-y-1.5');
                 toggleIcon[1]?.classList.add('opacity-0');
@@ -162,7 +147,11 @@ const { lang = 'en', t } = Astro.props;
         }
 
         function closeMenu() {
-            mobileMenu?.classList.add('-translate-x-full');
+            if (!mobileMenu) return;
+            mobileMenu.classList.add('hidden');
+            isMenuOpen = false;
+            
+            // Reset hamburger icon
             if (toggleIcon) {
                 toggleIcon[0]?.classList.remove('rotate-45', 'translate-y-1.5');
                 toggleIcon[1]?.classList.remove('opacity-0');
@@ -170,62 +159,42 @@ const { lang = 'en', t } = Astro.props;
             }
         }
 
-        mobileMenuToggle?.addEventListener('click', () => {
-            if (mobileMenu?.classList.contains('-translate-x-full')) {
-                openMenu();
+        // Toggle menu on burger click
+        mobileMenuToggle?.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (isMenuOpen) {
+                closeMenu();
             } else {
+                openMenu();
+            }
+        });
+
+        // Close menu on close button click
+        mobileMenuClose?.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeMenu();
+        });
+
+        // Close menu when clicking on any navigation link
+        const mobileLinks = mobileMenu?.querySelectorAll('a');
+        mobileLinks?.forEach(link => {
+            link.addEventListener('click', () => {
+                closeMenu();
+            });
+        });
+
+        // Close menu when clicking outside of it
+        document.addEventListener('click', (e) => {
+            if (isMenuOpen && mobileMenu && !mobileMenu.contains(e.target) && !mobileMenuToggle?.contains(e.target)) {
                 closeMenu();
             }
         });
 
-        mobileMenuClose?.addEventListener('click', closeMenu);
-
-        // Close menu when clicking on links
-        const mobileLinks = mobileMenu?.querySelectorAll('a');
-        mobileLinks?.forEach(link => {
-            link.addEventListener('click', (e) => {
-                // Always close the menu immediately when a link is clicked
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isMenuOpen) {
                 closeMenu();
-                // Force menu to be closed after a short delay to handle same-page navigation
-                setTimeout(() => {
-                    if (mobileMenu && !mobileMenu.classList.contains('-translate-x-full')) {
-                        closeMenu();
-                    }
-                }, 100);
-                // Allow the default navigation to proceed
-            });
-        });
-
-        // Handle mobile language buttons
-        const mobileLangButtons = document.querySelectorAll('[id^="mobile-lang-"]');
-        mobileLangButtons?.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const selectedLang = e.target.dataset.lang;
-                const currentPath = window.location.pathname;
-
-                // Extract the current page from path
-                let currentPage = '';
-                if (currentPath.includes('/schedule')) currentPage = 'schedule';
-                else if (currentPath.includes('/venue')) currentPage = 'venue';
-                else if (currentPath.includes('/accommodation')) currentPage = 'accommodation';
-                else if (currentPath.includes('/qa')) currentPage = 'qa';
-                else if (currentPath.includes('/rsvp')) currentPage = 'rsvp';
-
-                // Build new URL and navigate
-                if (selectedLang === 'en') {
-                    if (currentPage) {
-                        window.location.replace(`/${currentPage}`);
-                    } else {
-                        window.location.replace('/');
-                    }
-                } else {
-                    if (currentPage) {
-                        window.location.replace(`/${selectedLang}/${currentPage}`);
-                    } else {
-                        window.location.replace(`/${selectedLang}/`);
-                    }
-                }
-            });
+            }
         });
     });
 </script>
