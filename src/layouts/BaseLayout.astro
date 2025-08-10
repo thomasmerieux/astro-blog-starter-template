@@ -1,11 +1,12 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
 import '../styles/global.css';
+import type { Languages } from '../types';
 
 export interface Props {
   title?: string;
   description?: string;
-  lang?: string;
+  lang?: Languages;
 }
 
 const { 

@@ -2,13 +2,13 @@
 import { ViewTransitions } from 'astro:transitions';
 import '../styles/global.css';
 import Menu from '../components/Menu.astro';
-import type { Languages } from '../i18n/ui';
+import type { TranslationFunction, Languages } from '../types';
 
 export interface Props {
   title?: string;
   description?: string;
   lang?: Languages;
-  t?: any;
+  t: TranslationFunction;
 }
 
 const { 

@@ -1,5 +1,8 @@
 ---
 import PageWrapper from './PageWrapper.astro';
+import type { BaseComponentProps } from '../types';
+
+export interface Props extends BaseComponentProps {}
 
 const { lang = 'en', t } = Astro.props;
 ---
