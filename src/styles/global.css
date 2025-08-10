@@ -36,5 +36,18 @@ textarea:focus {
 /* Radio and checkbox styles */
 .form-radio,
 .form-checkbox {
-  @apply h-4 w-4 text-gray-600 border-gray-300 focus:ring-0 focus:ring-gray-500;
+  @apply h-4 w-4 border-gray-300 focus:ring-0;
+  color: #428bb0;
+}
+
+.form-radio:checked,
+.form-checkbox:checked {
+  background-color: #428bb0;
+  border-color: #428bb0;
+}
+
+.form-radio:focus,
+.form-checkbox:focus {
+  --tw-ring-color: #428bb0;
+  --tw-ring-opacity: 0.3;
 }

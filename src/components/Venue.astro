@@ -13,18 +13,20 @@ const { lang = 'en', t } = Astro.props;
       <div class="space-y-8">
         <!-- Venue Name -->
         <div>
-          <h2 class="text-xl font-normal text-gray-900 mb-2 uppercase">{t("venue.name")}</h2>
-          <div class="text-sm text-gray-500 uppercase tracking-wide font-normal">Bucharest, Romania</div>
+          <div class="flex flex-row md:flex-col items-baseline md:items-start gap-2 md:gap-0">
+            <h2 class="text-xl font-normal text-gray-900 uppercase">{t("venue.name")}</h2>
+            <div class="text-sm text-gray-500 uppercase tracking-wide font-normal">Bucharest, Romania</div>
+          </div>
         </div>
         
         <!-- Description with better typography -->
-        <div class="space-y-6">
+        <div class="space-y-6 md:mt-8 mt-4">
           <p class="text-gray-600 font-normal leading-relaxed">
             {t("venue.description")}
           </p>
           
-          <div class="p-6 border-l-2 border-[#428bb0]">
-            <h3 class="text-[#428bb0] font-medium mb-3">Weather Backup Plan</h3>
+          <div class="py-0 px-3 md:p-3 border-l-2 border-[#428bb0]">
+            <h3 class="text-[#428bb0] font-medium mb-0 md:mb-3">Weather Backup Plan</h3>
             <p class="text-gray-600 font-normal leading-relaxed">
               {t("venue.rain")}
             </p>

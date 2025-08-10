@@ -10,11 +10,18 @@ const { lang = 'en', t } = Astro.props;
     <div class="hidden md:flex gap-4 h-[28rem]">
       <!-- Large Hotel Card (2/3 width) -->
       <div class="flex-2 relative overflow-hidden group cursor-pointer" style="flex: 2;" onclick="window.open('https://athinasuiteshotel.com/', '_blank')">
-        <img 
-          src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop" 
-          alt="Athina Suites Hotel" 
-          class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
-        />
+        <div class="flex h-full">
+          <img 
+            src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop" 
+            alt="Athina Suites Hotel" 
+            class="w-1/2 h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+          />
+          <img 
+            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop" 
+            alt="Athina Suites Hotel Interior" 
+            class="w-1/2 h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+          />
+        </div>
         <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent group-hover:opacity-0 transition-opacity duration-300">
           <h3 class="text-white text-2xl font-normal">Athina Suites Hotel</h3>
         </div>
@@ -51,11 +58,18 @@ const { lang = 'en', t } = Astro.props;
     <div class="md:hidden space-y-4">
       <!-- Large Hotel Card -->
       <div class="relative overflow-hidden group cursor-pointer h-64" onclick="window.open('https://athinasuiteshotel.com/', '_blank')">
-        <img 
-          src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop" 
-          alt="Athina Suites Hotel" 
-          class="w-full h-full object-cover transition-opacity duration-300 group-active:opacity-0"
-        />
+        <div class="flex h-full">
+          <img 
+            src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop" 
+            alt="Athina Suites Hotel" 
+            class="w-1/2 h-full object-cover transition-opacity duration-300 group-active:opacity-0"
+          />
+          <img 
+            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop" 
+            alt="Athina Suites Hotel Interior" 
+            class="w-1/2 h-full object-cover transition-opacity duration-300 group-active:opacity-0"
+          />
+        </div>
         <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent group-active:opacity-0 transition-opacity duration-300">
           <h3 class="text-white text-xl font-normal">Athina Suites Hotel</h3>
         </div>

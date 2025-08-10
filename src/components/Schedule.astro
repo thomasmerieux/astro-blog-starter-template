@@ -12,58 +12,121 @@ const { lang = 'en', t } = Astro.props;
 
 <PageWrapper title={t("schedule.title")} lang={lang} t={t}>
   <div class="w-full max-w-4xl">
-    <div class="space-y-12">
-      <!-- Schedule Item 1 -->
-      <div class="flex items-start">
-        <div class="w-1/3 text-right pr-8">
-          <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.arrival.fulldate")}</div>
-          <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.arrival.date")}</div>
+    
+    <!-- Mobile Layout: Single left border with stacked content -->
+    <div class="md:hidden border-l-2 pl-4 space-y-8" style="border-color: #428bb0;">
+      <!-- Mobile Schedule Item 1 -->
+      <div>
+        <div class="mb-2">
+          <div class="flex justify-between gap-2">
+            <div style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.arrival.fulldate")}</div>
+            <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.arrival.date")}</div>
+          </div>
         </div>
-        <div class="w-0.5 h-20" style="background-color: #428bb0; width: 2px;"></div>
-        <div class="w-2/3 pl-8">
+        <div>
           <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.arrival.title")}</div>
           <div class="text-gray-600 font-normal">{t("schedule.events.arrival.description")}</div>
         </div>
       </div>
 
-      <!-- Schedule Item 2 -->
-      <div class="flex items-start">
-        <div class="w-1/3 text-right pr-8">
-          <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.dinner.fulldate")}</div>
-          <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.dinner.date")}</div>
+      <!-- Mobile Schedule Item 2 -->
+      <div>
+        <div class="mb-2">
+          <div class="flex justify-between gap-2">
+            <div style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.dinner.fulldate")}</div>
+            <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.dinner.date")}</div>
+          </div>
         </div>
-        <div class="w-0.5 h-20" style="background-color: #428bb0; width: 2px;"></div>
-        <div class="w-2/3 pl-8">
+        <div>
           <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.dinner.title")}</div>
           <div class="text-gray-600 font-normal">{t("schedule.events.dinner.description")}</div>
         </div>
       </div>
 
-      <!-- Schedule Item 3 -->
-      <div class="flex items-start">
-        <div class="w-1/3 text-right pr-8">
-          <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.dance.fulldate")}</div>
-          <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.dance.date")}</div>
+      <!-- Mobile Schedule Item 3 -->
+      <div>
+        <div class="mb-2">
+          <div class="flex justify-between gap-2">
+            <div style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.dance.fulldate")}</div>
+            <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.dance.date")}</div>
+          </div>
         </div>
-        <div class="w-0.5 h-20" style="background-color: #428bb0; width: 2px;"></div>
-        <div class="w-2/3 pl-8">
+        <div>
           <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.dance.title")}</div>
           <div class="text-gray-600 font-normal">{t("schedule.events.dance.description")}</div>
         </div>
       </div>
 
-      <!-- Schedule Item 4 -->
-      <div class="flex items-start">
-        <div class="w-1/3 text-right pr-8">
-          <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.brunch.fulldate")}</div>
-          <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.brunch.date")}</div>
+      <!-- Mobile Schedule Item 4 -->
+      <div>
+        <div class="mb-2">
+          <div class="flex justify-between gap-2">
+            <div style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.brunch.fulldate")}</div>
+            <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.brunch.date")}</div>
+          </div>
         </div>
-        <div class="w-0.5 h-20" style="background-color: #428bb0; width: 2px;"></div>
-        <div class="w-2/3 pl-8">
+        <div>
           <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.brunch.title")}</div>
           <div class="text-gray-600 font-normal">{t("schedule.events.brunch.description")}</div>
         </div>
       </div>
     </div>
+
+    <!-- Desktop Layout: Row-by-row with continuous border effect -->
+    <div class="hidden md:block relative">
+      <!-- Continuous border line -->
+      <div class="absolute left-1/3 top-0 bottom-0 border-l-2 ml-[-1px]" style="border-color: #428bb0;"></div>
+      
+      <div class="space-y-12">
+        <!-- Schedule Item 1 -->
+        <div class="flex items-start">
+          <div class="w-1/3 text-right pr-8">
+            <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.arrival.fulldate")}</div>
+            <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.arrival.date")}</div>
+          </div>
+          <div class="w-2/3 pl-8">
+            <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.arrival.title")}</div>
+            <div class="text-gray-600 font-normal">{t("schedule.events.arrival.description")}</div>
+          </div>
+        </div>
+
+        <!-- Schedule Item 2 -->
+        <div class="flex items-start">
+          <div class="w-1/3 text-right pr-8">
+            <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.dinner.fulldate")}</div>
+            <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.dinner.date")}</div>
+          </div>
+          <div class="w-2/3 pl-8">
+            <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.dinner.title")}</div>
+            <div class="text-gray-600 font-normal">{t("schedule.events.dinner.description")}</div>
+          </div>
+        </div>
+
+        <!-- Schedule Item 3 -->
+        <div class="flex items-start">
+          <div class="w-1/3 text-right pr-8">
+            <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.dance.fulldate")}</div>
+            <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.dance.date")}</div>
+          </div>
+          <div class="w-2/3 pl-8">
+            <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.dance.title")}</div>
+            <div class="text-gray-600 font-normal">{t("schedule.events.dance.description")}</div>
+          </div>
+        </div>
+
+        <!-- Schedule Item 4 -->
+        <div class="flex items-start">
+          <div class="w-1/3 text-right pr-8">
+            <div class="mb-1" style="font-weight: 500; font-size: 16px; color: #428bb0;">{t("schedule.events.brunch.fulldate")}</div>
+            <div class="text-gray-900" style="font-weight: 400;">{t("schedule.events.brunch.date")}</div>
+          </div>
+          <div class="w-2/3 pl-8">
+            <div class="text-xl font-normal text-gray-900 mb-2">{t("schedule.events.brunch.title")}</div>
+            <div class="text-gray-600 font-normal">{t("schedule.events.brunch.description")}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </PageWrapper>

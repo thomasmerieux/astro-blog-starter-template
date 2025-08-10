@@ -77,7 +77,7 @@ export const ui = {
     'rsvp.form.message': 'Message for the Couple',
     'rsvp.form.messagePlaceholder': 'Share your excitement or well wishes...',
     'rsvp.form.submit': 'Submit RSVP',
-    'rsvp.deadline': 'Please respond by August 15th, 2025',
+    'rsvp.deadline': 'Please respond by September 1st, 2025',
   },
   fr: {
     'nav.home': 'Accueil',
@@ -148,7 +148,7 @@ export const ui = {
     'rsvp.form.message': 'Message pour les mariés',
     'rsvp.form.messagePlaceholder': 'Partagez votre joie ou vos vœux...',
     'rsvp.form.submit': 'Envoyer la confirmation',
-    'rsvp.deadline': 'Merci de répondre avant le 15 août 2025',
+    'rsvp.deadline': 'Merci de répondre avant le 1er septembre 2025',
   },
   ro: {
     'nav.home': 'Acasă',
@@ -219,6 +219,6 @@ export const ui = {
     'rsvp.form.message': 'Mesaj pentru miri',
     'rsvp.form.messagePlaceholder': 'Împărtășiți-vă bucuria sau urările...',
     'rsvp.form.submit': 'Trimite confirmarea',
-    'rsvp.deadline': 'Vă rugăm să răspundeți până la 15 august 2025',
+    'rsvp.deadline': 'Vă rugăm să răspundeți până la 1 septembrie 2025',
   },
 } as const;

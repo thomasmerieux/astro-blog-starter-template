@@ -12,7 +12,24 @@ const { lang = 'en', t } = Astro.props;
 
 <PageWrapper title={t("rsvp.title")} lang={lang} t={t}>
   <div class="w-full max-w-3xl">
-    <form class="space-y-6">
+    <form class="space-y-4 md:space-y-6">
+      <!-- Attendance -->
+      <div>
+        <label class="form-label">
+          {t("rsvp.form.attendance")}
+        </label>
+        <div class="flex gap-6">
+          <label class="flex items-center cursor-pointer">
+            <input type="radio" name="attendance" value="yes" class="form-radio">
+            <span class="ml-2 text-gray-700 font-normal">{t("rsvp.form.attendanceYes")}</span>
+          </label>
+          <label class="flex items-center cursor-pointer">
+            <input type="radio" name="attendance" value="no" class="form-radio">
+            <span class="ml-2 text-gray-700 font-normal">{t("rsvp.form.attendanceNo")}</span>
+          </label>
+        </div>
+      </div>
+
       <!-- Name Fields -->
       <div class="grid md:grid-cols-2 gap-4">
         <div>
@@ -37,29 +54,45 @@ const { lang = 'en', t } = Astro.props;
         <input type="email" class="form-input" required>
       </div>
 
-      <!-- Attendance -->
-      <div>
-        <label class="form-label">
-          {t("rsvp.form.attendance")}
-        </label>
-        <div class="flex gap-6">
-          <label class="flex items-center cursor-pointer">
-            <input type="radio" name="attendance" value="yes" class="form-radio">
-            <span class="ml-2 text-gray-700 font-normal">{t("rsvp.form.attendanceYes")}</span>
-          </label>
-          <label class="flex items-center cursor-pointer">
-            <input type="radio" name="attendance" value="no" class="form-radio">
-            <span class="ml-2 text-gray-700 font-normal">{t("rsvp.form.attendanceNo")}</span>
-          </label>
-        </div>
-      </div>
-
       <!-- Vegetarian Option -->
       <div>
         <label class="flex items-center cursor-pointer">
           <input type="checkbox" name="vegetarian" class="form-checkbox">
           <span class="ml-2 text-gray-900 font-normal">{t("rsvp.form.vegetarian")}</span>
         </label>
+      </div>
+
+      <!-- Plus One Option -->
+      <div>
+        <label class="flex items-center cursor-pointer">
+          <input type="checkbox" name="plusOne" id="plusOneCheckbox" class="form-checkbox">
+          <span class="ml-2 text-gray-900 font-normal">I will bring someone</span>
+        </label>
+      </div>
+
+      <!-- Plus One Details (Hidden by default) -->
+      <div id="plusOneFields" class="hidden space-y-4">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">
+              Guest First Name
+            </label>
+            <input type="text" name="plusOneFirstName" class="form-input">
+          </div>
+          <div>
+            <label class="form-label">
+              Guest Last Name
+            </label>
+            <input type="text" name="plusOneLastName" class="form-input">
+          </div>
+        </div>
+        <!-- Plus One Vegetarian Option -->
+        <div>
+          <label class="flex items-center cursor-pointer">
+            <input type="checkbox" name="plusOneVegetarian" class="form-checkbox">
+            <span class="ml-2 text-gray-700 font-normal">Guest Vegetarian meal</span>
+          </label>
+        </div>
       </div>
 
       <!-- Submit Button -->
@@ -75,4 +108,38 @@ const { lang = 'en', t } = Astro.props;
       <p class="text-gray-500 font-normal">{t("rsvp.deadline")}</p>
     </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const plusOneCheckbox = document.getElementById('plusOneCheckbox');
+      const plusOneFields = document.getElementById('plusOneFields');
+      const plusOneFirstName = document.querySelector('input[name="plusOneFirstName"]');
+      const plusOneLastName = document.querySelector('input[name="plusOneLastName"]');
+
+      if (plusOneCheckbox && plusOneFields) {
+        plusOneCheckbox.addEventListener('change', function() {
+          if (this.checked) {
+            plusOneFields.classList.remove('hidden');
+            // Make +1 name fields required when shown
+            if (plusOneFirstName) plusOneFirstName.required = true;
+            if (plusOneLastName) plusOneLastName.required = true;
+          } else {
+            plusOneFields.classList.add('hidden');
+            // Remove required attribute when hidden
+            if (plusOneFirstName) {
+              plusOneFirstName.required = false;
+              plusOneFirstName.value = '';
+            }
+            if (plusOneLastName) {
+              plusOneLastName.required = false;
+              plusOneLastName.value = '';
+            }
+            // Clear vegetarian checkbox for +1
+            const plusOneVegetarian = document.querySelector('input[name="plusOneVegetarian"]');
+            if (plusOneVegetarian) plusOneVegetarian.checked = false;
+          }
+        });
+      }
+    });
+  </script>
 </PageWrapper>
