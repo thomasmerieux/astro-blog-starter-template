@@ -2,7 +2,7 @@
 export interface RSVPData {
   firstName: string;
   lastName: string;
-  email: string;
+  email: string | string[];
   attending: string;
   vegetarian: number;
   plusOne: number;

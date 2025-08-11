@@ -4,7 +4,7 @@ import { generateGuestConfirmationEmail, generateAdminNotificationEmail } from '
 
 export interface EmailConfig {
   from: string;
-  adminEmail: string;
+  adminEmail: string | string[];
   apiKey: string;
 }
 
