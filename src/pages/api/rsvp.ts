@@ -66,7 +66,7 @@ function generateRSVPEmailContent(data: {
 
 export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
 
-  console.log("keyyy", locals.runtime.env.WEDDING_RESEND_API_KEY)
+  console.log("env", locals.runtime.env)
   try {
     // Check if we're in development mode (no Cloudflare runtime)
     const isDevMode = !locals.runtime?.env;
