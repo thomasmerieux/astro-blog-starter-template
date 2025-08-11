@@ -5,19 +5,23 @@ export const prerender = false;
 export const GET: APIRoute = async ({ locals }) => {
   try {
     if (!locals.runtime?.env?.DB) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Database not available' 
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Database not available',
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     const DB = locals.runtime.env.DB;
 
     // Create the table
-    await DB.prepare(`
+    await DB.prepare(
+      `
       CREATE TABLE IF NOT EXISTS rsvp (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         first_name TEXT NOT NULL,
@@ -33,28 +37,36 @@ export const GET: APIRoute = async ({ locals }) => {
         ip_address TEXT,
         user_agent TEXT
       )
-    `).run();
+    `
+    ).run();
 
     // Verify table exists
-    const tables = await DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='rsvp';").first();
+    const tables = await DB.prepare(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='rsvp';"
+    ).first();
 
-    return new Response(JSON.stringify({
-      success: true,
-      message: 'Database setup complete',
-      tableExists: !!tables
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: 'Database setup complete',
+        tableExists: !!tables,
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   } catch (error) {
     console.error('Setup error:', error);
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: error.message 
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error.message,
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 };

@@ -12,11 +12,11 @@ export interface Props {
   t?: TranslationFunction;
 }
 
-const { 
-  title = "DANA & THOMAS",
-  description = "Wedding website for DANA & THOMAS - September 20th, 2025",
-  lang = "en",
-  t
+const {
+  title = 'DANA & THOMAS',
+  description = 'Wedding website for DANA & THOMAS - September 20th, 2025',
+  lang = 'en',
+  t,
 } = Astro.props;
 
 // Ensure we have a valid translation function
@@ -33,7 +33,7 @@ const validT = t || useTranslations(lang);
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <ViewTransitions />
-    
+
     <style>
       .bg-svg {
         background-image: url('./../assets/background.svg');
@@ -42,10 +42,20 @@ const validT = t || useTranslations(lang);
         background-repeat: no-repeat;
       }
     </style>
-    
+
     <!-- Preload critical fonts -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap"></noscript>
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap"
+      /></noscript
+    >
   </head>
   <body class="bg-svg">
     <div class="min-h-screen flex flex-col">
@@ -53,23 +63,23 @@ const validT = t || useTranslations(lang);
       <header class="flex-shrink-0">
         <Menu lang={lang} t={validT} />
       </header>
-      
+
       <!-- Home content - vertically centered with no title -->
       <main class="flex-1 flex items-center justify-center">
         <slot />
       </main>
     </div>
-    
+
     <!-- Language switching script -->
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         const selector = document.getElementById('language-selector');
         if (!selector) return;
-        
-        selector.addEventListener('change', function(e) {
+
+        selector.addEventListener('change', function (e) {
           const selectedLang = e.target.value;
           const currentPath = window.location.pathname;
-          
+
           // Extract the current page from path
           let currentPage = '';
           if (currentPath.includes('/schedule')) currentPage = 'schedule';
@@ -77,7 +87,7 @@ const validT = t || useTranslations(lang);
           else if (currentPath.includes('/accommodation')) currentPage = 'accommodation';
           else if (currentPath.includes('/qa')) currentPage = 'qa';
           else if (currentPath.includes('/rsvp')) currentPage = 'rsvp';
-          
+
           // Build new URL and force full page reload
           if (selectedLang === 'en') {
             if (currentPage) {

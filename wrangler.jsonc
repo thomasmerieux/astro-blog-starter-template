@@ -24,12 +24,5 @@
       "database_id": "801256f5-10b6-4c46-a8fc-ccf9c6c00dcb",
       "experimental_remote": true
     }
-  ],
-  "secrets_store_secrets": [
-    {
-      "binding": "RESEND_WEDDING_API_KEY",
-      "store_id": "d36b14c2fcd4405e9cb47268d0ec5d97",
-      "secret_name": "WEDDING_RESEND_API_KEY"
-    }
   ]
 }

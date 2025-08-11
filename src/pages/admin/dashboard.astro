@@ -1,0 +1,422 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// Check if user is authenticated
+const adminSession = Astro.cookies.get('admin_session');
+if (!adminSession || adminSession.value !== 'authenticated') {
+  return Astro.redirect('/admin/login');
+}
+---
+
+<BaseLayout title="Wedding Admin Dashboard">
+  <div class="min-h-screen bg-gray-50">
+    <!-- Admin Header -->
+    <header class="bg-white shadow-sm border-b">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-4">
+          <div>
+            <h1 class="text-2xl font-normal text-gray-900">Wedding Dashboard</h1>
+            <p class="text-sm text-gray-600">Manage your RSVP responses</p>
+          </div>
+          <button
+            id="logout-button"
+            class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <!-- Loading State -->
+      <div id="loading" class="text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600">
+        </div>
+        <p class="mt-2 text-gray-600">Loading RSVPs...</p>
+      </div>
+
+      <!-- Dashboard Content (Hidden initially) -->
+      <div id="dashboard-content" class="hidden">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                    <span class="text-white text-sm">✓</span>
+                  </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Attending</dt>
+                    <dd id="stat-attending" class="text-lg font-medium text-gray-900">-</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                    <span class="text-white text-sm">✗</span>
+                  </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Not Attending</dt>
+                    <dd id="stat-not-attending" class="text-lg font-medium text-gray-900">-</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <span class="text-white text-sm">+1</span>
+                  </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Plus Ones</dt>
+                    <dd id="stat-plus-ones" class="text-lg font-medium text-gray-900">-</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                    <span class="text-white text-sm">🥗</span>
+                  </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Vegetarian</dt>
+                    <dd id="stat-vegetarian" class="text-lg font-medium text-gray-900">-</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters and Actions -->
+        <div class="bg-white shadow rounded-lg mb-6">
+          <div class="px-4 py-5 sm:p-6">
+            <div class="sm:flex sm:items-center sm:justify-between">
+              <div class="sm:flex sm:space-x-4">
+                <div>
+                  <label for="filter-attending" class="block text-sm font-medium text-gray-700"
+                    >Attendance</label
+                  >
+                  <select
+                    id="filter-attending"
+                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                  >
+                    <option value="all">All</option>
+                    <option value="yes">Attending</option>
+                    <option value="no">Not Attending</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="filter-language" class="block text-sm font-medium text-gray-700"
+                    >Language</label
+                  >
+                  <select
+                    id="filter-language"
+                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                  >
+                    <option value="all">All Languages</option>
+                    <option value="en">English</option>
+                    <option value="fr">French</option>
+                    <option value="ro">Romanian</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="filter-vegetarian" class="block text-sm font-medium text-gray-700"
+                    >Dietary</label
+                  >
+                  <select
+                    id="filter-vegetarian"
+                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                  >
+                    <option value="all">All</option>
+                    <option value="true">Vegetarian</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mt-4 sm:mt-0 sm:ml-4 space-x-2">
+                <button
+                  id="test-email"
+                  class="inline-flex items-center px-4 py-2 border border-blue-300 shadow-sm text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Test Email
+                </button>
+                <button
+                  id="export-csv"
+                  class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Export CSV
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RSVP Table -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+          <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Guest List</h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">All RSVP responses from your guests</p>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >Guest</th
+                  >
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >Attendance</th
+                  >
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >Plus One</th
+                  >
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >Dietary</th
+                  >
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >Language</th
+                  >
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >Submitted</th
+                  >
+                </tr>
+              </thead>
+              <tbody id="rsvp-table-body" class="bg-white divide-y divide-gray-200">
+                <!-- Table rows will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let allRsvps = [];
+    let currentStats = {};
+
+    // Load RSVPs on page load
+    document.addEventListener('DOMContentLoaded', loadRsvps);
+
+    // Filter change handlers
+    document.getElementById('filter-attending')?.addEventListener('change', applyFilters);
+    document.getElementById('filter-language')?.addEventListener('change', applyFilters);
+    document.getElementById('filter-vegetarian')?.addEventListener('change', applyFilters);
+
+    // Export button
+    document.getElementById('export-csv')?.addEventListener('click', exportCsv);
+
+    // Test email button
+    document.getElementById('test-email')?.addEventListener('click', testEmail);
+
+    // Logout button
+    document.getElementById('logout-button')?.addEventListener('click', logout);
+
+    async function loadRsvps() {
+      try {
+        const response = await fetch('/api/admin/rsvps');
+        if (!response.ok) {
+          if (response.status === 401) {
+            window.location.href = '/admin/login';
+            return;
+          }
+          throw new Error('Failed to load RSVPs');
+        }
+
+        const data = await response.json();
+        allRsvps = data.rsvps;
+        currentStats = data.stats;
+
+        updateStats();
+        renderTable(allRsvps);
+
+        // Hide loading, show content
+        document.getElementById('loading')?.classList.add('hidden');
+        document.getElementById('dashboard-content')?.classList.remove('hidden');
+      } catch (error) {
+        console.error('Error loading RSVPs:', error);
+        alert('Failed to load RSVP data');
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('stat-attending').textContent = currentStats.attending || 0;
+      document.getElementById('stat-not-attending').textContent = currentStats.notAttending || 0;
+      document.getElementById('stat-plus-ones').textContent = currentStats.plusOnes || 0;
+      document.getElementById('stat-vegetarian').textContent = currentStats.vegetarians || 0;
+    }
+
+    function renderTable(rsvps) {
+      const tbody = document.getElementById('rsvp-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = '';
+
+      rsvps.forEach((rsvp) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div>
+                <div class="text-sm font-medium text-gray-900">${escapeHtml(rsvp.first_name)} ${escapeHtml(rsvp.last_name)}</div>
+                <div class="text-sm text-gray-500">${escapeHtml(rsvp.email)}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${rsvp.attending === 'yes' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+              ${rsvp.attending === 'yes' ? 'Attending' : 'Not Attending'}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            ${rsvp.plus_one ? `${escapeHtml(rsvp.guest_first_name || '')} ${escapeHtml(rsvp.guest_last_name || '')}`.trim() || 'Yes' : 'No'}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            ${getDietaryInfo(rsvp)}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            ${rsvp.language.toUpperCase()}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            ${new Date(rsvp.submitted_at).toLocaleDateString()}
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function getDietaryInfo(rsvp) {
+      const dietary = [];
+      if (rsvp.vegetarian) dietary.push('Main: Vegetarian');
+      if (rsvp.plus_one_vegetarian) dietary.push('Guest: Vegetarian');
+      return dietary.length > 0 ? dietary.join('<br>') : 'Standard';
+    }
+
+    function applyFilters() {
+      const attendingFilter = document.getElementById('filter-attending').value;
+      const languageFilter = document.getElementById('filter-language').value;
+      const vegetarianFilter = document.getElementById('filter-vegetarian').value;
+
+      let filtered = allRsvps;
+
+      if (attendingFilter !== 'all') {
+        filtered = filtered.filter((rsvp) => rsvp.attending === attendingFilter);
+      }
+
+      if (languageFilter !== 'all') {
+        filtered = filtered.filter((rsvp) => rsvp.language === languageFilter);
+      }
+
+      if (vegetarianFilter === 'true') {
+        filtered = filtered.filter(
+          (rsvp) => rsvp.vegetarian === 1 || rsvp.plus_one_vegetarian === 1
+        );
+      }
+
+      renderTable(filtered);
+    }
+
+    async function exportCsv() {
+      try {
+        const response = await fetch('/api/admin/export?format=csv');
+        if (!response.ok) throw new Error('Export failed');
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `wedding-rsvps-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } catch (error) {
+        console.error('Error exporting:', error);
+        alert('Export failed');
+      }
+    }
+
+    async function testEmail() {
+      const email = prompt('Enter email address to send test email to:');
+      if (!email) return;
+
+      try {
+        const button = document.getElementById('test-email');
+        button.disabled = true;
+        button.textContent = 'Sending...';
+
+        const formData = new FormData();
+        formData.append('email', email);
+
+        const response = await fetch('/api/admin/test-email', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert(`✅ Test email sent successfully to ${email}!\n\nMessage ID: ${result.messageId}`);
+        } else {
+          alert(`❌ Test email failed: ${result.error}`);
+        }
+      } catch (error) {
+        console.error('Test email error:', error);
+        alert('❌ Failed to send test email');
+      } finally {
+        const button = document.getElementById('test-email');
+        button.disabled = false;
+        button.textContent = 'Test Email';
+      }
+    }
+
+    async function logout() {
+      try {
+        await fetch('/api/admin/auth', { method: 'DELETE' });
+        window.location.href = '/admin/login';
+      } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = '/admin/login';
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</BaseLayout>

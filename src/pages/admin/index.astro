@@ -1,0 +1,9 @@
+---
+// Redirect /admin to /admin/dashboard
+const adminSession = Astro.cookies.get('admin_session');
+if (adminSession && adminSession.value === 'authenticated') {
+  return Astro.redirect('/admin/dashboard');
+} else {
+  return Astro.redirect('/admin/login');
+}
+---

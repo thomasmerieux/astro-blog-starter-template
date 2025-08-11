@@ -7,12 +7,12 @@ export function getLangFromUrl(url: URL) {
 }
 
 export function useTranslations(lang: keyof typeof ui) {
-  return function t(key: keyof typeof ui[typeof defaultLang]) {
+  return function t(key: keyof (typeof ui)[typeof defaultLang]) {
     // Ensure lang is valid, fallback to defaultLang
-    const validLang = (lang && ui[lang]) ? lang : defaultLang;
+    const validLang = lang && ui[lang] ? lang : defaultLang;
     // Ensure the translation exists, fallback to defaultLang translation
     return ui[validLang]?.[key] || ui[defaultLang][key] || key;
-  }
+  };
 }
 
 export function getRouteFromUrl(url: URL): string | undefined {

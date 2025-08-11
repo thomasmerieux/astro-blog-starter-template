@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Admin Login">
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+      <div>
+        <h2 class="mt-6 text-center text-3xl font-normal text-gray-900">Wedding Admin</h2>
+        <p class="mt-2 text-center text-sm text-gray-600">Access your RSVP dashboard</p>
+      </div>
+      <form id="login-form" class="mt-8 space-y-6">
+        <div>
+          <label for="password" class="sr-only"> Password </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            class="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+            placeholder="Admin password"
+          />
+        </div>
+
+        <div id="error-message" class="text-red-600 text-sm hidden" role="alert"></div>
+
+        <div>
+          <button
+            type="submit"
+            id="login-button"
+            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+          >
+            <span id="login-text">Sign in</span>
+            <span id="login-loading" class="hidden">Signing in...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('login-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const loginButton = document.getElementById('login-button') as HTMLButtonElement;
+      const loginText = document.getElementById('login-text');
+      const loginLoading = document.getElementById('login-loading');
+      const errorMessage = document.getElementById('error-message');
+      const passwordInput = document.getElementById('password') as HTMLInputElement;
+
+      // Show loading state
+      loginButton.disabled = true;
+      loginText?.classList.add('hidden');
+      loginLoading?.classList.remove('hidden');
+      errorMessage?.classList.add('hidden');
+
+      try {
+        const formData = new FormData(e.target as HTMLFormElement);
+
+        const response = await fetch('/api/admin/auth', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          window.location.href = '/admin/dashboard';
+        } else {
+          if (errorMessage) {
+            errorMessage.textContent = result.error || 'Login failed';
+            errorMessage.classList.remove('hidden');
+          }
+          passwordInput.value = '';
+          passwordInput.focus();
+        }
+      } catch (error) {
+        if (errorMessage) {
+          errorMessage.textContent = 'Network error. Please try again.';
+          errorMessage.classList.remove('hidden');
+        }
+      } finally {
+        // Reset button state
+        loginButton.disabled = false;
+        loginText?.classList.remove('hidden');
+        loginLoading?.classList.add('hidden');
+      }
+    });
+  </script>
+</BaseLayout>

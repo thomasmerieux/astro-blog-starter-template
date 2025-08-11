@@ -15,58 +15,64 @@ const validT = t || useTranslations(lang);
 
 <div class="min-h-screen flex flex-col">
   <!-- Skip link for screen readers -->
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:border focus:border-gray-300">
-    Skip to main content
+  <a
+    href="#main-content"
+    class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:border focus:border-gray-300"
+  >
+    {validT('common.skipToContent')}
   </a>
-  
+
   <!-- Menu - fixed at top -->
   <header class="flex-shrink-0">
     <Menu lang={lang} t={validT} />
   </header>
-  
+
   <!-- Main content area -->
   <main id="main-content" class="flex-1 flex flex-col p-6 md:p-8">
     <!-- Page Title -->
     <div class="text-center mb-8 md:mb-12 lg:mb-20 flex-shrink-0">
-      <h1 class="text-gray-800 uppercase tracking-wider font-normal text-2xl sm:text-4xl" style="letter-spacing: 4px;">
-        {validT("thankYou.title")}
+      <h1
+        class="text-gray-800 uppercase tracking-wider font-normal text-2xl sm:text-4xl"
+        style="letter-spacing: 4px;"
+      >
+        {validT('thankYou.title')}
       </h1>
     </div>
-    
+
     <!-- Page Content -->
     <div class="flex-1 flex justify-center">
       <div class="w-full max-w-4xl">
-        
         <!-- Main Content with Left Border Design (matching Schedule page) -->
         <div class="border-l-2 pl-8 space-y-8" style="border-color: #428bb0;">
-          
           <!-- Thank You Header -->
           <div class="space-y-6">
             <div class="mb-4">
-              <div style="font-weight: 500; font-size: 16px; color: #428bb0;">RSVP Confirmed</div>
+              <div style="font-weight: 500; font-size: 16px; color: #428bb0;">
+                {validT('thankYou.confirmed')}
+              </div>
             </div>
-            
+
             <p class="text-gray-600 font-normal leading-relaxed text-lg">
-              {validT("thankYou.message")}
+              {validT('thankYou.message')}
             </p>
           </div>
 
           <!-- Navigation Actions -->
           <div class="flex flex-col sm:flex-row gap-4 pt-6">
-            <a 
+            <a
               href={lang === 'en' ? '/' : `/${lang}/`}
               class="inline-flex items-center justify-center px-6 py-3 border-2 text-gray-900 font-normal uppercase tracking-wide text-sm hover:bg-gray-50 transition-colors duration-200"
               style="border-color: #428bb0;"
             >
-              {validT("thankYou.backToHome")}
+              {validT('thankYou.backToHome')}
             </a>
 
-            <a 
+            <a
               href={lang === 'en' ? '/schedule' : `/${lang}/schedule`}
               class="inline-flex items-center justify-center px-6 py-3 text-white font-normal uppercase tracking-wide text-sm hover:opacity-90 transition-opacity duration-200"
               style="background-color: #428bb0;"
             >
-              {validT("thankYou.viewSchedule")}
+              {validT('thankYou.viewSchedule')}
             </a>
           </div>
         </div>

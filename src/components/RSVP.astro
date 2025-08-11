@@ -15,409 +15,271 @@ const validT = t || useTranslations(lang);
 
 <div class="min-h-screen flex flex-col">
   <!-- Skip link for screen readers -->
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:border focus:border-gray-300">
-    Skip to main content
+  <a
+    href="#main-content"
+    class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:border focus:border-gray-300"
+  >
+    {validT('common.skipToContent')}
   </a>
-  
+
   <!-- Menu - fixed at top -->
   <header class="flex-shrink-0">
     <Menu lang={lang} t={validT} />
   </header>
-  
+
   <!-- Main content area -->
   <main id="main-content" class="flex-1 flex flex-col p-6 md:p-8">
     <!-- Page Title -->
     <div class="text-center mb-8 md:mb-12 lg:mb-20 flex-shrink-0">
-      <h1 class="text-gray-800 uppercase tracking-wider font-normal text-2xl sm:text-4xl" style="letter-spacing: 4px;">
-        {validT("rsvp.title")}
+      <h1
+        class="text-gray-800 uppercase tracking-wider font-normal text-2xl sm:text-4xl"
+        style="letter-spacing: 4px;"
+      >
+        {validT('rsvp.title')}
       </h1>
     </div>
-    
+
     <!-- Page Content -->
     <div class="flex-1 flex justify-center">
-  <div class="w-full max-w-3xl">
+      <div class="w-full max-w-3xl">
+        <form
+          id="rsvp-form"
+          class="space-y-4 md:space-y-6"
+          action="/api/rsvp"
+          method="POST"
+          novalidate
+        >
+          <!-- Hidden language field -->
+          <input type="hidden" name="language" value={lang} />
+          <!-- Attendance -->
+          <fieldset>
+            <legend class="form-label">
+              {validT('rsvp.form.attendance')}
+              <span class="text-red-500" aria-label={validT('common.required')}>*</span>
+            </legend>
+            <div class="flex gap-6">
+              <label class="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  id="attendance-yes"
+                  name="attendance"
+                  value="yes"
+                  class="form-radio"
+                  aria-describedby="attendance-error"
+                  required
+                />
+                <span class="ml-2 text-gray-700 font-normal"
+                  >{validT('rsvp.form.attendanceYes')}</span
+                >
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  id="attendance-no"
+                  name="attendance"
+                  value="no"
+                  class="form-radio"
+                  aria-describedby="attendance-error"
+                  required
+                />
+                <span class="ml-2 text-gray-700 font-normal"
+                  >{validT('rsvp.form.attendanceNo')}</span
+                >
+              </label>
+            </div>
+            <div
+              id="attendance-error"
+              class="text-red-500 text-sm mt-1 hidden"
+              role="alert"
+              aria-live="polite"
+            >
+            </div>
+          </fieldset>
 
-    <form id="rsvp-form" class="space-y-4 md:space-y-6" action="/api/rsvp" method="POST" novalidate>
-      <!-- Hidden language field -->
-      <input type="hidden" name="language" value={lang}>
-      <!-- Attendance -->
-      <fieldset>
-        <legend class="form-label">
-          {validT("rsvp.form.attendance")} <span class="text-red-500" aria-label="required">*</span>
-        </legend>
-        <div class="flex gap-6">
-          <label class="flex items-center cursor-pointer">
-            <input type="radio" id="attendance-yes" name="attendance" value="yes" class="form-radio" aria-describedby="attendance-error" required>
-            <span class="ml-2 text-gray-700 font-normal">{validT("rsvp.form.attendanceYes")}</span>
-          </label>
-          <label class="flex items-center cursor-pointer">
-            <input type="radio" id="attendance-no" name="attendance" value="no" class="form-radio" aria-describedby="attendance-error" required>
-            <span class="ml-2 text-gray-700 font-normal">{validT("rsvp.form.attendanceNo")}</span>
-          </label>
-        </div>
-        <div id="attendance-error" class="text-red-500 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
-      </fieldset>
-
-      <!-- Name Fields -->
-      <div class="grid md:grid-cols-2 gap-4">
-        <div>
-          <label for="firstName" class="form-label">
-            {validT("rsvp.form.firstName")} <span class="text-red-500" aria-label="required">*</span>
-          </label>
-          <input type="text" id="firstName" name="firstName" class="form-input" 
-                 aria-describedby="firstName-error" 
-                 autocomplete="given-name" 
-                 required>
-          <div id="firstName-error" class="text-red-500 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
-        </div>
-        <div>
-          <label for="lastName" class="form-label">
-            {validT("rsvp.form.lastName")} <span class="text-red-500" aria-label="required">*</span>
-          </label>
-          <input type="text" id="lastName" name="lastName" class="form-input" 
-                 aria-describedby="lastName-error" 
-                 autocomplete="family-name" 
-                 required>
-          <div id="lastName-error" class="text-red-500 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
-        </div>
-      </div>
-
-      <!-- Email -->
-      <div>
-        <label for="email" class="form-label">
-          {validT("rsvp.form.email")} <span class="text-red-500" aria-label="required">*</span>
-        </label>
-        <input type="email" id="email" name="email" class="form-input" 
-               aria-describedby="email-error" 
-               autocomplete="email" 
-               required>
-        <div id="email-error" class="text-red-500 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
-      </div>
-
-      <!-- Vegetarian Option -->
-      <div>
-        <label class="flex items-center cursor-pointer">
-          <input type="checkbox" id="vegetarian" name="vegetarian" class="form-checkbox">
-          <span class="ml-2 text-gray-900 font-normal">{validT("rsvp.form.vegetarian")}</span>
-        </label>
-      </div>
-
-      <!-- Plus One Option -->
-      <div>
-        <label class="flex items-center cursor-pointer">
-          <input type="checkbox" name="plusOne" id="plusOneCheckbox" class="form-checkbox">
-          <span class="ml-2 text-gray-900 font-normal">I will bring someone</span>
-        </label>
-      </div>
-
-      <!-- Plus One Details (Hidden by default) -->
-      <div id="plusOneFields" class="hidden space-y-4">
-        <div class="grid md:grid-cols-2 gap-4">
-          <div>
-            <label for="guestFirstName" class="form-label">
-              Guest First Name <span class="text-red-500" aria-label="required when bringing a guest">*</span>
-            </label>
-            <input type="text" id="guestFirstName" name="guestFirstName" class="form-input"
-                   aria-describedby="guestFirstName-error"
-                   autocomplete="given-name">
-            <div id="guestFirstName-error" class="text-red-500 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
+          <!-- Name Fields -->
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label for="firstName" class="form-label">
+                {validT('rsvp.form.firstName')}
+                <span class="text-red-500" aria-label={validT('common.required')}>*</span>
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                class="form-input"
+                aria-describedby="firstName-error"
+                autocomplete="given-name"
+                required
+              />
+              <div
+                id="firstName-error"
+                class="text-red-500 text-sm mt-1 hidden"
+                role="alert"
+                aria-live="polite"
+              >
+              </div>
+            </div>
+            <div>
+              <label for="lastName" class="form-label">
+                {validT('rsvp.form.lastName')}
+                <span class="text-red-500" aria-label={validT('common.required')}>*</span>
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                class="form-input"
+                aria-describedby="lastName-error"
+                autocomplete="family-name"
+                required
+              />
+              <div
+                id="lastName-error"
+                class="text-red-500 text-sm mt-1 hidden"
+                role="alert"
+                aria-live="polite"
+              >
+              </div>
+            </div>
           </div>
+
+          <!-- Email -->
           <div>
-            <label for="guestLastName" class="form-label">
-              Guest Last Name <span class="text-red-500" aria-label="required when bringing a guest">*</span>
+            <label for="email" class="form-label">
+              {validT('rsvp.form.email')}
+              <span class="text-red-500" aria-label={validT('common.required')}>*</span>
             </label>
-            <input type="text" id="guestLastName" name="guestLastName" class="form-input"
-                   aria-describedby="guestLastName-error"
-                   autocomplete="family-name">
-            <div id="guestLastName-error" class="text-red-500 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              aria-describedby="email-error"
+              autocomplete="email"
+              required
+            />
+            <div
+              id="email-error"
+              class="text-red-500 text-sm mt-1 hidden"
+              role="alert"
+              aria-live="polite"
+            >
+            </div>
           </div>
-        </div>
-        <!-- Plus One Vegetarian Option -->
-        <div>
-          <label class="flex items-center cursor-pointer">
-            <input type="checkbox" id="plusOneVegetarian" name="plusOneVegetarian" class="form-checkbox">
-            <span class="ml-2 text-gray-700 font-normal">Guest Vegetarian meal</span>
-          </label>
+
+          <!-- Vegetarian Option -->
+          <div>
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" id="vegetarian" name="vegetarian" class="form-checkbox" />
+              <span class="ml-2 text-gray-900 font-normal">{validT('rsvp.form.vegetarian')}</span>
+            </label>
+          </div>
+
+          <!-- Plus One Option -->
+          <div>
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" name="plusOne" id="plusOneCheckbox" class="form-checkbox" />
+              <span class="ml-2 text-gray-900 font-normal">{validT('rsvp.form.plusOne')}</span>
+            </label>
+          </div>
+
+          <!-- Plus One Details (Hidden by default) -->
+          <div id="plusOneFields" class="hidden space-y-4">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="guestFirstName" class="form-label">
+                  {validT('rsvp.form.guestFirstName')}
+                  <span class="text-red-500" aria-label={validT('common.requiredWhenGuest')}>*</span
+                  >
+                </label>
+                <input
+                  type="text"
+                  id="guestFirstName"
+                  name="guestFirstName"
+                  class="form-input"
+                  aria-describedby="guestFirstName-error"
+                  autocomplete="given-name"
+                />
+                <div
+                  id="guestFirstName-error"
+                  class="text-red-500 text-sm mt-1 hidden"
+                  role="alert"
+                  aria-live="polite"
+                >
+                </div>
+              </div>
+              <div>
+                <label for="guestLastName" class="form-label">
+                  {validT('rsvp.form.guestLastName')}
+                  <span class="text-red-500" aria-label={validT('common.requiredWhenGuest')}>*</span
+                  >
+                </label>
+                <input
+                  type="text"
+                  id="guestLastName"
+                  name="guestLastName"
+                  class="form-input"
+                  aria-describedby="guestLastName-error"
+                  autocomplete="family-name"
+                />
+                <div
+                  id="guestLastName-error"
+                  class="text-red-500 text-sm mt-1 hidden"
+                  role="alert"
+                  aria-live="polite"
+                >
+                </div>
+              </div>
+            </div>
+            <!-- Plus One Vegetarian Option -->
+            <div>
+              <label class="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  id="plusOneVegetarian"
+                  name="plusOneVegetarian"
+                  class="form-checkbox"
+                />
+                <span class="ml-2 text-gray-700 font-normal"
+                  >{validT('rsvp.form.guestVegetarian')}</span
+                >
+              </label>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="text-center pt-4">
+            <button
+              type="submit"
+              id="submit-button"
+              class="btn-primary"
+              aria-describedby="submit-status"
+            >
+              <span id="submit-text">{validT('rsvp.form.submit')}</span>
+              <span id="submit-loading" class="hidden">{validT('rsvp.form.submitting')}</span>
+            </button>
+            <div id="submit-status" class="sr-only" aria-live="polite"></div>
+          </div>
+        </form>
+
+        <!-- Deadline Notice -->
+        <div class="mt-8 text-center">
+          <p class="text-gray-500 font-normal">{validT('rsvp.deadline')}</p>
         </div>
       </div>
 
-      <!-- Submit Button -->
-      <div class="text-center pt-4">
-        <button type="submit" id="submit-button" class="btn-primary" aria-describedby="submit-status">
-          <span id="submit-text">{validT("rsvp.form.submit")}</span>
-          <span id="submit-loading" class="hidden">Submitting...</span>
-        </button>
-        <div id="submit-status" class="sr-only" aria-live="polite"></div>
-      </div>
-    </form>
+      <script>
+        import { initializeRSVPForm } from '../scripts/rsvp-form.ts';
 
-    <!-- Deadline Notice -->
-    <div class="mt-8 text-center">
-      <p class="text-gray-500 font-normal">{validT("rsvp.deadline")}</p>
+        // Initialize the RSVP form with the translation function
+        initializeRSVPForm(window.validT || ((key) => key));
+      </script>
+
+      <script define:vars={{ validT }}>
+        // Make translation function globally available for the imported script
+        window.validT = validT;
+      </script>
     </div>
-  </div>
-
-  <script>
-    console.log('RSVP script loading...');
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded, initializing form...');
-      const form = document.getElementById('rsvp-form');
-      console.log('Form element:', form);
-      const submitButton = document.getElementById('submit-button');
-      const submitText = document.getElementById('submit-text');
-      const submitLoading = document.getElementById('submit-loading');
-      const submitStatus = document.getElementById('submit-status');
-      
-      const plusOneCheckbox = document.getElementById('plusOneCheckbox');
-      const plusOneFields = document.getElementById('plusOneFields');
-      const guestFirstName = document.querySelector('input[name="guestFirstName"]');
-      const guestLastName = document.querySelector('input[name="guestLastName"]');
-
-      // Form validation functions
-      function validateEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      }
-
-      function showFieldError(fieldName, message) {
-        const errorElement = document.getElementById(fieldName + '-error');
-        if (errorElement) {
-          errorElement.textContent = message;
-          errorElement.classList.remove('hidden');
-          
-          // Add aria-invalid to the field
-          const field = document.getElementById(fieldName) || document.querySelector(`input[name="${fieldName}"]`);
-          if (field) {
-            field.setAttribute('aria-invalid', 'true');
-            field.classList.add('border-red-500');
-          }
-        }
-      }
-
-      function clearFieldError(fieldName) {
-        const errorElement = document.getElementById(fieldName + '-error');
-        if (errorElement) {
-          errorElement.textContent = '';
-          errorElement.classList.add('hidden');
-          
-          // Remove aria-invalid from the field
-          const field = document.getElementById(fieldName) || document.querySelector(`input[name="${fieldName}"]`);
-          if (field) {
-            field.removeAttribute('aria-invalid');
-            field.classList.remove('border-red-500');
-          }
-        }
-      }
-
-      function clearAllErrors() {
-        const errorElements = document.querySelectorAll('[id$="-error"]');
-        errorElements.forEach(element => {
-          element.textContent = '';
-          element.classList.add('hidden');
-        });
-        
-        const invalidFields = document.querySelectorAll('[aria-invalid="true"]');
-        invalidFields.forEach(field => {
-          field.removeAttribute('aria-invalid');
-          field.classList.remove('border-red-500');
-        });
-      }
-
-      function showErrorMessage(message) {
-        // Create a temporary error display for non-field errors
-        const existingError = document.getElementById('general-error');
-        if (existingError) {
-          existingError.remove();
-        }
-        
-        const errorDiv = document.createElement('div');
-        errorDiv.id = 'general-error';
-        errorDiv.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800';
-        errorDiv.textContent = message;
-        
-        form.appendChild(errorDiv);
-        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-
-      // Plus one functionality
-      if (plusOneCheckbox && plusOneFields) {
-        plusOneCheckbox.addEventListener('change', function() {
-          if (this.checked) {
-            plusOneFields.classList.remove('hidden');
-            plusOneFields.setAttribute('aria-hidden', 'false');
-            // Make guest name fields required when shown
-            if (guestFirstName) {
-              guestFirstName.required = true;
-              guestFirstName.setAttribute('aria-required', 'true');
-            }
-            if (guestLastName) {
-              guestLastName.required = true;
-              guestLastName.setAttribute('aria-required', 'true');
-            }
-            // Focus first guest field
-            setTimeout(() => guestFirstName?.focus(), 100);
-          } else {
-            plusOneFields.classList.add('hidden');
-            plusOneFields.setAttribute('aria-hidden', 'true');
-            // Remove required attribute when hidden
-            if (guestFirstName) {
-              guestFirstName.required = false;
-              guestFirstName.removeAttribute('aria-required');
-              guestFirstName.value = '';
-              clearFieldError('guestFirstName');
-            }
-            if (guestLastName) {
-              guestLastName.required = false;
-              guestLastName.removeAttribute('aria-required');
-              guestLastName.value = '';
-              clearFieldError('guestLastName');
-            }
-            // Clear vegetarian checkbox for +1
-            const plusOneVegetarian = document.querySelector('input[name="plusOneVegetarian"]');
-            if (plusOneVegetarian) plusOneVegetarian.checked = false;
-          }
-        });
-      }
-
-      // Form submission
-      if (form) {
-        form.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          console.log('Form submission intercepted');
-          
-          // Clear previous errors
-          clearAllErrors();
-          const existingError = document.getElementById('general-error');
-          if (existingError) {
-            existingError.remove();
-          }
-          
-          // Validate form
-          let hasErrors = false;
-          const formData = new FormData(form);
-          
-          // Validate required fields
-          if (!formData.get('firstName')?.toString().trim()) {
-            showFieldError('firstName', 'First name is required');
-            hasErrors = true;
-          }
-          
-          if (!formData.get('lastName')?.toString().trim()) {
-            showFieldError('lastName', 'Last name is required');
-            hasErrors = true;
-          }
-          
-          const email = formData.get('email')?.toString().trim();
-          if (!email) {
-            showFieldError('email', 'Email is required');
-            hasErrors = true;
-          } else if (!validateEmail(email)) {
-            showFieldError('email', 'Please enter a valid email address');
-            hasErrors = true;
-          }
-          
-          if (!formData.get('attendance')) {
-            showFieldError('attendance', 'Please select your attendance');
-            hasErrors = true;
-          }
-          
-          // Validate guest fields if plus one is checked
-          if (formData.get('plusOne') === 'on') {
-            if (!formData.get('guestFirstName')?.toString().trim()) {
-              showFieldError('guestFirstName', 'Guest first name is required');
-              hasErrors = true;
-            }
-            if (!formData.get('guestLastName')?.toString().trim()) {
-              showFieldError('guestLastName', 'Guest last name is required');
-              hasErrors = true;
-            }
-          }
-          
-          if (hasErrors) {
-            // Focus first error field
-            const firstErrorField = document.querySelector('[aria-invalid="true"]');
-            if (firstErrorField) {
-              firstErrorField.focus();
-            }
-            return;
-          }
-          
-          // Show loading state
-          submitButton.disabled = true;
-          submitText.classList.add('hidden');
-          submitLoading.classList.remove('hidden');
-          submitStatus.textContent = 'Submitting your RSVP...';
-          
-          try {
-            const response = await fetch('/api/rsvp', {
-              method: 'POST',
-              body: formData,
-              redirect: 'manual' // Handle redirects manually
-            });
-            
-            // Check if response is a redirect
-            if (response.type === 'opaqueredirect' || response.status === 302) {
-              // Success! The API redirected us, so redirect to thank you page
-              const pathLang = window.location.pathname.split('/')[1];
-              const currentLang = ['en', 'fr', 'ro'].includes(pathLang) ? pathLang : 'en';
-              const thankYouUrl = currentLang === 'en' ? '/thank-you' : `/${currentLang}/thank-you`;
-              console.log('RSVP submitted successfully, redirecting to:', thankYouUrl);
-              window.location.href = thankYouUrl;
-            } else if (response.ok) {
-              // Try to parse as JSON for success response
-              try {
-                const result = await response.json();
-                if (result.success) {
-                  const pathLang = window.location.pathname.split('/')[1];
-                  const currentLang = ['en', 'fr', 'ro'].includes(pathLang) ? pathLang : 'en';
-                  const thankYouUrl = currentLang === 'en' ? '/thank-you' : `/${currentLang}/thank-you`;
-                  window.location.href = thankYouUrl;
-                } else {
-                  handleErrorResponse(result);
-                }
-              } catch (parseError) {
-                // If JSON parsing fails but response is ok, assume success
-                const pathLang = window.location.pathname.split('/')[1];
-                const currentLang = ['en', 'fr', 'ro'].includes(pathLang) ? pathLang : 'en';
-                const thankYouUrl = currentLang === 'en' ? '/thank-you' : `/${currentLang}/thank-you`;
-                window.location.href = thankYouUrl;
-              }
-            } else {
-              // Handle error response
-              try {
-                const result = await response.json();
-                handleErrorResponse(result);
-              } catch (parseError) {
-                showErrorMessage('An unexpected error occurred');
-                submitStatus.textContent = 'Error submitting RSVP';
-              }
-            }
-          } catch (error) {
-            console.error('RSVP submission error:', error);
-            showErrorMessage('Network error. Please check your connection and try again.');
-            submitStatus.textContent = 'Network error occurred';
-          } finally {
-            // Reset button state
-            submitButton.disabled = false;
-            submitText.classList.remove('hidden');
-            submitLoading.classList.add('hidden');
-          }
-          
-          function handleErrorResponse(result) {
-            if (result.errors) {
-              // Show field-specific errors
-              for (const [field, error] of Object.entries(result.errors)) {
-                showFieldError(field, error);
-              }
-            } else {
-              showErrorMessage(result.error || 'An unexpected error occurred');
-            }
-            submitStatus.textContent = 'Error submitting RSVP';
-          }
-        });
-      }
-    });
-  </script>
-    </div>
-  </div>
   </main>
 </div>

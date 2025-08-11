@@ -6,306 +6,402 @@ export interface Props extends MenuProps {}
 const { lang = 'en', t } = Astro.props;
 ---
 
-<nav class="relative flex items-center w-full py-4 border-b border-gray-200" role="navigation" aria-label="Main navigation">
-    <div class="w-full max-w-7xl mx-auto px-8 md:px-16 flex items-center relative">
+<nav
+  class="relative flex items-center w-full py-4 border-b border-gray-200"
+  role="navigation"
+  aria-label={t('menu.mainNavigation')}
+>
+  <div class="w-full max-w-7xl mx-auto px-8 md:px-16 flex items-center relative">
     <!-- Mobile Menu Button -->
-    <button id="mobile-menu-toggle" 
-            class="md:hidden flex flex-col space-y-1 mr-4"
-            aria-label="Toggle navigation menu"
-            aria-expanded="false"
-            aria-controls="mobile-menu"
-            type="button">
-        <span class="w-6 h-0.5 bg-gray-800 transition-transform duration-300"></span>
-        <span class="w-6 h-0.5 bg-gray-800 transition-opacity duration-300"></span>
-        <span class="w-6 h-0.5 bg-gray-800 transition-transform duration-300"></span>
+    <button
+      id="mobile-menu-toggle"
+      class="md:hidden flex flex-col space-y-1 mr-4"
+      aria-label={t('menu.toggleMenu')}
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      type="button"
+    >
+      <span class="w-6 h-0.5 bg-gray-800 transition-transform duration-300"></span>
+      <span class="w-6 h-0.5 bg-gray-800 transition-opacity duration-300"></span>
+      <span class="w-6 h-0.5 bg-gray-800 transition-transform duration-300"></span>
     </button>
 
     <!-- Desktop Navigation Links (absolutely centered) -->
     <div class="hidden xl:block absolute left-1/2 transform -translate-x-1/2" role="menubar">
-        <ul class="flex space-x-6">
-            <li>
-                <a href={lang === 'en' ? '/' : `/${lang}/`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.home")}
-                </a>
-            </li>
-            <li>
-                <a href={lang === 'en' ? '/schedule' : `/${lang}/schedule`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.schedule")}
-                </a>
-            </li>
-            <li>
-                <a href={lang === 'en' ? '/venue' : `/${lang}/venue`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.venue")}
-                </a>
-            </li>
-            <li>
-                <a href={lang === 'en' ? '/accommodation' : `/${lang}/accommodation`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.accommodation")}
-                </a>
-            </li>
-            <li>
-                <a href={lang === 'en' ? '/qa' : `/${lang}/qa`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.qa")}
-                </a>
-            </li>
-            <li>
-                <a href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`} class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.rsvp")}
-                </a>
-            </li>
-        </ul>
+      <ul class="flex space-x-6">
+        <li>
+          <a
+            href={lang === 'en' ? '/' : `/${lang}/`}
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.home')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/schedule' : `/${lang}/schedule`}
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.schedule')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/venue' : `/${lang}/venue`}
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.venue')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/accommodation' : `/${lang}/accommodation`}
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.accommodation')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/qa' : `/${lang}/qa`}
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.qa')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`}
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.rsvp')}
+          </a>
+        </li>
+      </ul>
     </div>
 
     <!-- iPad Navigation Links (left-aligned) -->
     <div class="hidden md:block xl:hidden" role="menubar">
-        <ul class="flex space-x-4">
-            <li>
-                <a href={lang === 'en' ? '/' : `/${lang}/`} class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.home")}
-                </a>
-            </li>
-            <li>
-                <a href={lang === 'en' ? '/schedule' : `/${lang}/schedule`} class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.schedule")}
-                </a>
-            </li>
-            <li>
-                <a href={lang === 'en' ? '/venue' : `/${lang}/venue`} class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.venue")}
-                </a>
-            </li>
-            <li>
-                <a href={lang === 'en' ? '/accommodation' : `/${lang}/accommodation`} class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.accommodation")}
-                </a>
-            </li>
-            <li>
-                <a href={lang === 'en' ? '/qa' : `/${lang}/qa`} class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.qa")}
-                </a>
-            </li>
-            <li>
-                <a href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`} class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide" role="menuitem">
-                    {t("nav.rsvp")}
-                </a>
-            </li>
-        </ul>
+      <ul class="flex space-x-4">
+        <li>
+          <a
+            href={lang === 'en' ? '/' : `/${lang}/`}
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.home')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/schedule' : `/${lang}/schedule`}
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.schedule')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/venue' : `/${lang}/venue`}
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.venue')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/accommodation' : `/${lang}/accommodation`}
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.accommodation')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/qa' : `/${lang}/qa`}
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.qa')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`}
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            role="menuitem"
+          >
+            {t('nav.rsvp')}
+          </a>
+        </li>
+      </ul>
     </div>
 
     <!-- Language Selector (positioned to the right) -->
     <div class="ml-auto relative">
-        <label for="language-selector" class="sr-only">Select language</label>
-        <div class="flex items-center border border-gray-300 px-3 py-1.5 hover:border-gray-400 transition-colors">
-            <!-- Globe/Planet icon -->
-            <svg class="w-4 h-4 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
-            </svg>
-            <select id="language-selector" 
-                    class="bg-transparent border-none text-sm focus:outline-none appearance-none cursor-pointer pr-5"
-                    aria-label="Language selection">
-                <option value="en" selected={lang === 'en'}>English</option>
-                <option value="fr" selected={lang === 'fr'}>Français</option>
-                <option value="ro" selected={lang === 'ro'}>Română</option>
-            </select>
-            <!-- Dropdown arrow -->
-            <svg class="absolute right-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-        </div>
+      <label for="language-selector" class="sr-only">{t('menu.selectLanguage')}</label>
+      <div
+        class="flex items-center border border-gray-300 px-3 py-1.5 hover:border-gray-400 transition-colors"
+      >
+        <!-- Globe/Planet icon -->
+        <svg
+          class="w-4 h-4 text-gray-600 mr-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+          ></path>
+        </svg>
+        <select
+          id="language-selector"
+          class="bg-transparent border-none text-sm focus:outline-none appearance-none cursor-pointer pr-5"
+          aria-label={t('menu.languageSelection')}
+        >
+          <option value="en" selected={lang === 'en'}>English</option>
+          <option value="fr" selected={lang === 'fr'}>Français</option>
+          <option value="ro" selected={lang === 'ro'}>Română</option>
+        </select>
+        <!-- Dropdown arrow -->
+        <svg
+          class="absolute right-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-600 pointer-events-none"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"
+          ></path>
+        </svg>
+      </div>
     </div>
-    </div>
+  </div>
 </nav>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobile-menu" class="mobile-menu" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title">
-    <nav class="mobile-nav" role="navigation" aria-label="Mobile navigation">
-        <h2 id="mobile-menu-title" class="sr-only">Navigation Menu</h2>
-        <a href={lang === 'en' ? '/' : `/${lang}/`} class="mobile-link" role="menuitem">{t("nav.home")}</a>
-        <a href={lang === 'en' ? '/schedule' : `/${lang}/schedule`} class="mobile-link" role="menuitem">{t("nav.schedule")}</a>
-        <a href={lang === 'en' ? '/venue' : `/${lang}/venue`} class="mobile-link" role="menuitem">{t("nav.venue")}</a>
-        <a href={lang === 'en' ? '/accommodation' : `/${lang}/accommodation`} class="mobile-link" role="menuitem">{t("nav.accommodation")}</a>
-        <a href={lang === 'en' ? '/qa' : `/${lang}/qa`} class="mobile-link" role="menuitem">{t("nav.qa")}</a>
-        <a href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`} class="mobile-link" role="menuitem">{t("nav.rsvp")}</a>
-    </nav>
+<div
+  id="mobile-menu"
+  class="mobile-menu"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="mobile-menu-title"
+>
+  <nav class="mobile-nav" role="navigation" aria-label={t('menu.mobileNavigation')}>
+    <h2 id="mobile-menu-title" class="sr-only">{t('menu.navigationMenu')}</h2>
+    <a href={lang === 'en' ? '/' : `/${lang}/`} class="mobile-link" role="menuitem"
+      >{t('nav.home')}</a
+    >
+    <a href={lang === 'en' ? '/schedule' : `/${lang}/schedule`} class="mobile-link" role="menuitem"
+      >{t('nav.schedule')}</a
+    >
+    <a href={lang === 'en' ? '/venue' : `/${lang}/venue`} class="mobile-link" role="menuitem"
+      >{t('nav.venue')}</a
+    >
+    <a
+      href={lang === 'en' ? '/accommodation' : `/${lang}/accommodation`}
+      class="mobile-link"
+      role="menuitem">{t('nav.accommodation')}</a
+    >
+    <a href={lang === 'en' ? '/qa' : `/${lang}/qa`} class="mobile-link" role="menuitem"
+      >{t('nav.qa')}</a
+    >
+    <a href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`} class="mobile-link" role="menuitem"
+      >{t('nav.rsvp')}</a
+    >
+  </nav>
 </div>
 
 <style>
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-menu.active {
+    transform: translateX(0);
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 80px 2rem 2rem;
+    gap: 2rem;
+  }
+
+  .mobile-link {
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #1f2937;
+    text-decoration: none;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e7eb;
+    transition: color 0.2s ease;
+  }
+
+  .mobile-link:hover {
+    color: #6b7280;
+  }
+
+  @media (min-width: 768px) {
     .mobile-menu {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background-color: white;
-        z-index: 50;
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
+      display: none;
     }
-    
-    .mobile-menu.active {
-        transform: translateX(0);
-    }
-    
-    .mobile-nav {
-        display: flex;
-        flex-direction: column;
-        padding: 80px 2rem 2rem;
-        gap: 2rem;
-    }
-    
-    .mobile-link {
-        font-size: 1.5rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: #1f2937;
-        text-decoration: none;
-        padding: 1rem 0;
-        border-bottom: 1px solid #e5e7eb;
-        transition: color 0.2s ease;
-    }
-    
-    .mobile-link:hover {
-        color: #6b7280;
-    }
-    
-    @media (min-width: 768px) {
-        .mobile-menu {
-            display: none;
-        }
-    }
-    
-    /* Hamburger animation */
-    #mobile-menu-toggle span {
-        transition: all 0.3s ease;
-    }
-    
-    #mobile-menu-toggle.active span:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
-    }
-    
-    #mobile-menu-toggle.active span:nth-child(2) {
-        opacity: 0;
-    }
-    
-    #mobile-menu-toggle.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(7px, -6px);
-    }
+  }
+
+  /* Hamburger animation */
+  #mobile-menu-toggle span {
+    transition: all 0.3s ease;
+  }
+
+  #mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+
+  #mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  #mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+  }
 </style>
 
 <script>
-function initMobileMenu() {
+  function initMobileMenu() {
     const hamburger = document.getElementById('mobile-menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
     const mobileLinks = document.querySelectorAll('.mobile-link');
-    
+
     if (!hamburger || !mobileMenu) return;
-    
+
     // Remove existing event listeners to prevent duplicates
     hamburger.replaceWith(hamburger.cloneNode(true));
     const newHamburger = document.getElementById('mobile-menu-toggle');
-    
+
     let isMenuOpen = false;
     let focusableElements = [];
     let firstFocusableElement = null;
     let lastFocusableElement = null;
-    
+
     // Update focusable elements
     function updateFocusableElements() {
-        focusableElements = Array.from(mobileMenu.querySelectorAll('a[href], button, [tabindex]:not([tabindex="-1"])'));
-        firstFocusableElement = focusableElements[0];
-        lastFocusableElement = focusableElements[focusableElements.length - 1];
+      focusableElements = Array.from(
+        mobileMenu.querySelectorAll('a[href], button, [tabindex]:not([tabindex="-1"])')
+      );
+      firstFocusableElement = focusableElements[0];
+      lastFocusableElement = focusableElements[focusableElements.length - 1];
     }
-    
+
     // Toggle menu
     function toggleMenu() {
-        isMenuOpen = !isMenuOpen;
-        mobileMenu.classList.toggle('active');
-        newHamburger.classList.toggle('active');
-        newHamburger.setAttribute('aria-expanded', isMenuOpen.toString());
-        
-        if (isMenuOpen) {
-            // Trap focus in menu
-            updateFocusableElements();
-            document.body.style.overflow = 'hidden';
-            setTimeout(() => firstFocusableElement?.focus(), 100);
-        } else {
-            // Return focus to hamburger button
-            document.body.style.overflow = '';
-            newHamburger.focus();
-        }
-    }
-    
-    // Close menu
-    function closeMenu() {
-        if (!isMenuOpen) return;
-        
-        isMenuOpen = false;
-        mobileMenu.classList.remove('active');
-        newHamburger.classList.remove('active');
-        newHamburger.setAttribute('aria-expanded', 'false');
+      isMenuOpen = !isMenuOpen;
+      mobileMenu.classList.toggle('active');
+      newHamburger.classList.toggle('active');
+      newHamburger.setAttribute('aria-expanded', isMenuOpen.toString());
+
+      if (isMenuOpen) {
+        // Trap focus in menu
+        updateFocusableElements();
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => firstFocusableElement?.focus(), 100);
+      } else {
+        // Return focus to hamburger button
         document.body.style.overflow = '';
         newHamburger.focus();
+      }
     }
-    
+
+    // Close menu
+    function closeMenu() {
+      if (!isMenuOpen) return;
+
+      isMenuOpen = false;
+      mobileMenu.classList.remove('active');
+      newHamburger.classList.remove('active');
+      newHamburger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      newHamburger.focus();
+    }
+
     // Hamburger click
-    newHamburger.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleMenu();
+    newHamburger.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleMenu();
     });
-    
+
     // Keyboard navigation for hamburger
-    newHamburger.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            toggleMenu();
-        }
+    newHamburger.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleMenu();
+      }
     });
-    
+
     // Close menu when clicking links
-    mobileLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            closeMenu();
-        });
+    mobileLinks.forEach((link) => {
+      link.addEventListener('click', function () {
+        closeMenu();
+      });
     });
-    
+
     // Focus trap for mobile menu
-    mobileMenu.addEventListener('keydown', function(e) {
-        if (e.key === 'Tab') {
-            if (e.shiftKey) {
-                // Shift + Tab
-                if (document.activeElement === firstFocusableElement) {
-                    e.preventDefault();
-                    lastFocusableElement?.focus();
-                }
-            } else {
-                // Tab
-                if (document.activeElement === lastFocusableElement) {
-                    e.preventDefault();
-                    firstFocusableElement?.focus();
-                }
-            }
+    mobileMenu.addEventListener('keydown', function (e) {
+      if (e.key === 'Tab') {
+        if (e.shiftKey) {
+          // Shift + Tab
+          if (document.activeElement === firstFocusableElement) {
+            e.preventDefault();
+            lastFocusableElement?.focus();
+          }
+        } else {
+          // Tab
+          if (document.activeElement === lastFocusableElement) {
+            e.preventDefault();
+            firstFocusableElement?.focus();
+          }
         }
+      }
     });
-    
+
     // Close menu when clicking outside
-    document.addEventListener('click', function(e) {
-        if (isMenuOpen && !mobileMenu.contains(e.target) && !newHamburger.contains(e.target)) {
-            closeMenu();
-        }
+    document.addEventListener('click', function (e) {
+      if (isMenuOpen && !mobileMenu.contains(e.target) && !newHamburger.contains(e.target)) {
+        closeMenu();
+      }
     });
-    
+
     // Close menu on escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && isMenuOpen) {
-            closeMenu();
-        }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isMenuOpen) {
+        closeMenu();
+      }
     });
-}
+  }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', initMobileMenu);
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initMobileMenu);
 
-// Re-initialize after ViewTransitions (for Home and RSVP pages)
-document.addEventListener('astro:after-swap', initMobileMenu);
+  // Re-initialize after ViewTransitions (for Home and RSVP pages)
+  document.addEventListener('astro:after-swap', initMobileMenu);
 </script>

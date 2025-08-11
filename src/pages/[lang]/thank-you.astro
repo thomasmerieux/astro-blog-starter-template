@@ -4,7 +4,7 @@ import { useTranslations, type Languages } from '../../i18n/utils';
 
 const { lang } = Astro.params as { lang: Languages };
 // Ensure lang is valid, fallback to 'en'
-const validLang = (lang && ['en', 'fr', 'ro'].includes(lang)) ? lang as Languages : 'en';
+const validLang = lang && ['en', 'fr', 'ro'].includes(lang) ? (lang as Languages) : 'en';
 const t = useTranslations(validLang);
 ---
 

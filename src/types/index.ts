@@ -3,7 +3,7 @@ import type { Languages, ui, defaultLang } from '../i18n/ui';
 /**
  * Translation function type for i18n - matches the actual implementation
  */
-export type TranslationFunction = (key: keyof typeof ui[typeof defaultLang]) => string;
+export type TranslationFunction = (key: keyof (typeof ui)[typeof defaultLang]) => string;
 
 /**
  * Base component props interface
@@ -23,7 +23,9 @@ export interface PageComponentProps extends BaseComponentProps {
 /**
  * Menu component props interface
  */
-export interface MenuProps extends BaseComponentProps {}
+export interface MenuProps extends BaseComponentProps {
+  // Inherits all properties from BaseComponentProps
+}
 
 /**
  * Page wrapper component props interface
@@ -130,9 +132,9 @@ export const TypeGuards = {
    */
   validateBaseComponentProps(props: unknown): props is BaseComponentProps {
     if (!props || typeof props !== 'object') return false;
-    
+
     const p = props as Record<string, unknown>;
-    
+
     // lang is optional but must be valid if provided
     if (p.lang !== undefined && !this.isValidLanguage(p.lang)) {
       console.error('Invalid language provided:', p.lang);
@@ -153,9 +155,9 @@ export const TypeGuards = {
    */
   validateRSVPFormData(data: unknown): data is Partial<RSVPFormData> {
     if (!data || typeof data !== 'object') return false;
-    
+
     const formData = data as Record<string, unknown>;
-    
+
     // Basic validation - extend as needed
     if (formData.email && typeof formData.email === 'string') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -164,12 +166,12 @@ export const TypeGuards = {
         return false;
       }
     }
-    
+
     if (formData.attendance && !['yes', 'no'].includes(formData.attendance as string)) {
       console.error('Invalid attendance value');
       return false;
     }
 
     return true;
-  }
+  },
 };

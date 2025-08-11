@@ -1,0 +1,23 @@
+# Build output
+dist/
+.astro/
+
+# Dependencies  
+node_modules/
+
+# Logs
+*.log
+
+# Generated files
+worker-configuration.d.ts
+package-lock.json
+
+# Environment files
+.env*
+
+# Test files
+test-email.js
+
+# Assets
+src/assets/
+public/

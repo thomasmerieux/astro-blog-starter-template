@@ -15,78 +15,105 @@ const validT = t || useTranslations(lang);
 
 <div class="min-h-screen flex flex-col">
   <!-- Skip link for screen readers -->
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:border focus:border-gray-300">
-    Skip to main content
+  <a
+    href="#main-content"
+    class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:border focus:border-gray-300"
+  >
+    {validT('common.skipToContent')}
   </a>
-  
+
   <!-- Menu - fixed at top -->
   <header class="flex-shrink-0">
     <Menu lang={lang} t={validT} />
   </header>
-  
+
   <!-- Main content area -->
   <main id="main-content" class="flex-1 flex flex-col p-6 md:p-8">
     <!-- Page Title -->
     <div class="text-center mb-8 md:mb-12 lg:mb-20 flex-shrink-0">
-      <h1 class="text-gray-800 uppercase tracking-wider font-normal text-2xl sm:text-4xl" style="letter-spacing: 4px;">
-        {validT("qa.title")}
+      <h1
+        class="text-gray-800 uppercase tracking-wider font-normal text-2xl sm:text-4xl"
+        style="letter-spacing: 4px;"
+      >
+        {validT('qa.title')}
       </h1>
     </div>
-    
+
     <!-- Page Content -->
     <div class="flex-1 flex justify-center">
-  <div class="w-full max-w-4xl">
-    
-    <!-- Mobile Layout: Single continuous left border -->
-    <div class="md:hidden border-l-2 pl-4 space-y-8" style="border-color: #428bb0;">
-      <!-- Mobile Q&A Item 1 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-normal text-gray-900">{validT("qa.questions.parking.question")}</h3>
-        <p class="text-gray-600 font-normal leading-relaxed">{validT("qa.questions.parking.answer")}</p>
-      </div>
+      <div class="w-full max-w-4xl">
+        <!-- Mobile Layout: Single continuous left border -->
+        <div class="md:hidden border-l-2 pl-4 space-y-8" style="border-color: #428bb0;">
+          <!-- Mobile Q&A Item 1 -->
+          <div class="space-y-4">
+            <h3 class="text-xl font-normal text-gray-900">
+              {validT('qa.questions.parking.question')}
+            </h3>
+            <p class="text-gray-600 font-normal leading-relaxed">
+              {validT('qa.questions.parking.answer')}
+            </p>
+          </div>
 
-      <!-- Mobile Q&A Item 2 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-normal text-gray-900">{validT("qa.questions.children.question")}</h3>
-        <p class="text-gray-600 font-normal leading-relaxed">{validT("qa.questions.children.answer")}</p>
-      </div>
+          <!-- Mobile Q&A Item 2 -->
+          <div class="space-y-4">
+            <h3 class="text-xl font-normal text-gray-900">
+              {validT('qa.questions.children.question')}
+            </h3>
+            <p class="text-gray-600 font-normal leading-relaxed">
+              {validT('qa.questions.children.answer')}
+            </p>
+          </div>
 
-      <!-- Mobile Q&A Item 3 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-normal text-gray-900">{validT("qa.questions.dresscode.question")}</h3>
-        <p class="text-gray-600 font-normal leading-relaxed">{validT("qa.questions.dresscode.answer")}</p>
-      </div>
-    </div>
+          <!-- Mobile Q&A Item 3 -->
+          <div class="space-y-4">
+            <h3 class="text-xl font-normal text-gray-900">
+              {validT('qa.questions.dresscode.question')}
+            </h3>
+            <p class="text-gray-600 font-normal leading-relaxed">
+              {validT('qa.questions.dresscode.answer')}
+            </p>
+          </div>
+        </div>
 
-    <!-- Desktop Layout: Individual borders -->
-    <div class="hidden md:block space-y-12">
-      <!-- Desktop Q&A Item 1 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-normal text-gray-900">{validT("qa.questions.parking.question")}</h3>
-        <div class="p-3 border-l-2 border-[#428bb0]">
-          <p class="text-gray-600 font-normal leading-relaxed">{validT("qa.questions.parking.answer")}</p>
+        <!-- Desktop Layout: Individual borders -->
+        <div class="hidden md:block space-y-12">
+          <!-- Desktop Q&A Item 1 -->
+          <div class="space-y-4">
+            <h3 class="text-xl font-normal text-gray-900">
+              {validT('qa.questions.parking.question')}
+            </h3>
+            <div class="p-3 border-l-2 border-[#428bb0]">
+              <p class="text-gray-600 font-normal leading-relaxed">
+                {validT('qa.questions.parking.answer')}
+              </p>
+            </div>
+          </div>
+
+          <!-- Desktop Q&A Item 2 -->
+          <div class="space-y-4">
+            <h3 class="text-xl font-normal text-gray-900">
+              {validT('qa.questions.children.question')}
+            </h3>
+            <div class="p-3 border-l-2 border-[#428bb0]">
+              <p class="text-gray-600 font-normal leading-relaxed">
+                {validT('qa.questions.children.answer')}
+              </p>
+            </div>
+          </div>
+
+          <!-- Desktop Q&A Item 3 -->
+          <div class="space-y-4">
+            <h3 class="text-xl font-normal text-gray-900">
+              {validT('qa.questions.dresscode.question')}
+            </h3>
+            <div class="p-3 border-l-2 border-[#428bb0]">
+              <p class="text-gray-600 font-normal leading-relaxed">
+                {validT('qa.questions.dresscode.answer')}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-
-      <!-- Desktop Q&A Item 2 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-normal text-gray-900">{validT("qa.questions.children.question")}</h3>
-        <div class="p-3 border-l-2 border-[#428bb0]">
-          <p class="text-gray-600 font-normal leading-relaxed">{validT("qa.questions.children.answer")}</p>
-        </div>
-      </div>
-
-      <!-- Desktop Q&A Item 3 -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-normal text-gray-900">{validT("qa.questions.dresscode.question")}</h3>
-        <div class="p-3 border-l-2 border-[#428bb0]">
-          <p class="text-gray-600 font-normal leading-relaxed">{validT("qa.questions.dresscode.answer")}</p>
-        </div>
-      </div>
     </div>
-
-  </div>
-    </div>
-  </div>
   </main>
 </div>

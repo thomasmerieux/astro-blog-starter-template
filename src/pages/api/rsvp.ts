@@ -1,102 +1,122 @@
 import type { APIRoute } from 'astro';
-import { Resend } from 'resend';
+import { EmailService } from '../../utils/emailService';
+import type { RSVPData } from '../../utils/emailTemplates';
 export const prerender = false;
 
-// Simple email validation
+// Comprehensive email validation
 function validateEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  // Basic format check
+  const emailRegex =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+  if (!emailRegex.test(email)) {
+    return false;
+  }
+
+  // Additional security checks
+  if (email.length > 254) return false; // RFC 5321 limit
+  if (email.includes('..')) return false; // Double dots not allowed
+  if (email.startsWith('.') || email.endsWith('.')) return false;
+  if (email.includes('@.') || email.includes('.@')) return false;
+
+  // Check for common disposable email patterns
+  const disposableDomains = [
+    '10minutemail.com',
+    'tempmail.org',
+    'guerrillamail.com',
+    'mailinator.com',
+    'throwaway.email',
+  ];
+
+  const domain = email.split('@')[1]?.toLowerCase();
+  if (disposableDomains.includes(domain)) {
+    return false;
+  }
+
+  return true;
 }
 
-// Generate email content for RSVP notification
-function generateRSVPEmailContent(data: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  attending: string;
-  vegetarian: number;
-  plusOne: number;
-  guestFirstName?: string | null;
-  guestLastName?: string | null;
-  plusOneVegetarian?: number;
-  language: string;
-}) {
-  const subject = `New RSVP: ${data.firstName} ${data.lastName} - ${data.attending === 'yes' ? 'Attending' : 'Not Attending'}`;
-  
-  const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <h2 style="color: #2563eb; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">
-        New RSVP Submission
-      </h2>
-      
-      <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-        <h3 style="margin-top: 0; color: #1f2937;">Guest Information</h3>
-        <p><strong>Name:</strong> ${data.firstName} ${data.lastName}</p>
-        <p><strong>Email:</strong> ${data.email}</p>
-        <p><strong>Attendance:</strong> <span style="color: ${data.attending === 'yes' ? '#10b981' : '#ef4444'}; font-weight: bold;">
-          ${data.attending === 'yes' ? '✓ Attending' : '✗ Not Attending'}
-        </span></p>
-        <p><strong>Vegetarian Meal:</strong> ${data.vegetarian ? 'Yes' : 'No'}</p>
-        <p><strong>Language:</strong> ${data.language.toUpperCase()}</p>
-      </div>
-      
-      ${data.plusOne ? `
-        <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #92400e;">Guest Information</h3>
-          <p><strong>Guest Name:</strong> ${data.guestFirstName || ''} ${data.guestLastName || ''}</p>
-          <p><strong>Guest Vegetarian Meal:</strong> ${data.plusOneVegetarian ? 'Yes' : 'No'}</p>
-        </div>
-      ` : ''}
-      
-      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 14px;">
-        <p>This RSVP was submitted on ${new Date().toLocaleString('en-US', { 
-          timeZone: 'UTC',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        })} UTC</p>
-      </div>
-    </div>
-  `;
-  
-  return { subject, html };
+// Input sanitization
+function sanitizeInput(input: string): string {
+  return input
+    .trim()
+    .replace(/[<>"']/g, '') // Remove potential XSS characters
+    .substring(0, 100); // Limit length
+}
+
+// Simple rate limiting check
+async function checkRateLimit(DB: any, email: string, ipAddress: string): Promise<boolean> {
+  const oneHourAgo = Date.now() - 60 * 60 * 1000;
+
+  // Check submissions from this email in the last hour
+  const emailCount = await DB.prepare(
+    'SELECT COUNT(*) as count FROM rsvp WHERE email = ? AND submitted_at > ?'
+  )
+    .bind(email, oneHourAgo)
+    .first();
+
+  if (emailCount.count >= 3) return false;
+
+  // Check submissions from this IP in the last hour
+  const ipCount = await DB.prepare(
+    'SELECT COUNT(*) as count FROM rsvp WHERE ip_address = ? AND submitted_at > ?'
+  )
+    .bind(ipAddress, oneHourAgo)
+    .first();
+
+  if (ipCount.count >= 5) return false;
+
+  return true;
 }
 
 export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
-
-  console.log("env", locals.runtime.env)
-  console.log("kwy", locals.runtime.env.API_KEY_RESEND)
   try {
-    // Check if we're in development mode (no Cloudflare runtime)
-    const isDevMode = !locals.runtime?.env;
-
     // Check if we have database access in production mode
     if (!locals.runtime?.env?.DB) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Database connection not available'
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Database connection not available',
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     const DB = locals.runtime.env.DB;
     const formData = await request.formData();
 
-    // Extract form data
-    const firstName = formData.get('firstName')?.toString().trim();
-    const lastName = formData.get('lastName')?.toString().trim();
-    const email = formData.get('email')?.toString().trim();
+    // Extract and sanitize form data
+    const firstName = sanitizeInput(formData.get('firstName')?.toString() || '');
+    const lastName = sanitizeInput(formData.get('lastName')?.toString() || '');
+    const email = formData.get('email')?.toString()?.trim().toLowerCase() || '';
     const attending = formData.get('attendance')?.toString();
     const vegetarian = formData.get('vegetarian') === 'on' ? 1 : 0;
     const plusOne = formData.get('plusOne') === 'on' ? 1 : 0;
-    const guestFirstName = formData.get('guestFirstName')?.toString().trim() || null;
-    const guestLastName = formData.get('guestLastName')?.toString().trim() || null;
+    const guestFirstName = formData.get('guestFirstName')?.toString()
+      ? sanitizeInput(formData.get('guestFirstName')?.toString() || '')
+      : null;
+    const guestLastName = formData.get('guestLastName')?.toString()
+      ? sanitizeInput(formData.get('guestLastName')?.toString() || '')
+      : null;
     const plusOneVegetarian = formData.get('plusOneVegetarian') === 'on' ? 1 : 0;
     const language = formData.get('language')?.toString() || 'en';
+
+    // Rate limiting check
+    if (!(await checkRateLimit(DB, email, clientAddress))) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Too many submissions. Please try again later.',
+        }),
+        {
+          status: 429,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
 
     // Validation
     const errors: string[] = [];
@@ -104,18 +124,21 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     if (!lastName) errors.push('Last name is required');
     if (!email) errors.push('Email is required');
     else if (!validateEmail(email)) errors.push('Please enter a valid email address');
-    if (!attending || !['yes', 'no'].includes(attending)) errors.push('Please select your attendance');
+    if (!attending || !['yes', 'no'].includes(attending))
+      errors.push('Please select your attendance');
     if (plusOne && (!guestFirstName || !guestLastName)) errors.push('Guest name is required');
 
-    console.log('hello')
     if (errors.length > 0) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        errors 
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          errors,
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     // Get additional metadata
@@ -123,44 +146,54 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     const submittedAt = Date.now();
 
     // Insert into database using direct D1 query
-    const result = await DB.prepare(`
+    const result = await DB.prepare(
+      `
       INSERT INTO rsvp (
         first_name, last_name, email, attending, vegetarian, 
         plus_one, guest_first_name, guest_last_name, plus_one_vegetarian, 
         language, submitted_at, ip_address, user_agent
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      firstName,
-      lastName, 
-      email,
-      attending,
-      vegetarian,
-      plusOne,
-      guestFirstName,
-      guestLastName,
-      plusOneVegetarian,
-      language,
-      submittedAt,
-      clientAddress,
-      userAgent
-    ).run();
+    `
+    )
+      .bind(
+        firstName,
+        lastName,
+        email,
+        attending,
+        vegetarian,
+        plusOne,
+        guestFirstName,
+        guestLastName,
+        plusOneVegetarian,
+        language,
+        submittedAt,
+        clientAddress,
+        userAgent
+      )
+      .run();
 
     if (!result.success) {
       throw new Error('Failed to insert RSVP');
     }
 
-    console.log('RSVP submitted successfully:', result.meta.last_row_id);
-
-    // Send email notification using Resend
+    // Send emails using professional email service
     try {
-      // Check if we have the Resend API key
-      if (!locals.runtime?.env?.API_KEY_RESEND) {
-        console.warn('Resend API key not available - skipping email notification');
+      // Check if we have the required API keys
+      const apiKey =
+        locals.runtime?.env?.API_KEY_RESEND || locals.runtime?.env?.RESEND_WEDDING_API_KEY;
+
+      if (!apiKey) {
+        console.warn('⚠️ Resend API key not available - skipping email notifications');
       } else {
-          console.log('key', locals.runtime.env.API_KEY_RESEND as string)
-          const resend = new Resend(locals.runtime.env.API_KEY_RESEND as string);
-        
-        const emailData = {
+        // Initialize email service
+        const emailService = new EmailService({
+          apiKey: apiKey as string,
+          from: 'Dana & Thomas <wedding@danaandthomas.party>',
+          adminEmail: 'thomas.merieux@gmail.com', // Replace with your actual admin email
+        });
+
+        // Prepare RSVP data for email templates
+        const rsvpEmailData: RSVPData = {
           firstName,
           lastName,
           email,
@@ -170,47 +203,53 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
           guestFirstName,
           guestLastName,
           plusOneVegetarian,
-          language
+          language,
+          weddingDate: 'September 20, 2025',
+          venueName: 'Loft Diplomat',
+          venueAddress: 'Herăstrău Park, Bucharest, Romania',
+          coupleNames: 'Dana & Thomas',
         };
-        
-        const { subject, html } = generateRSVPEmailContent(emailData);
-        
-        const emailResult = await resend.emails.send({
-            from: 'information@danaandthomas.party',
-            to: 'thomas.merieux@gmail.com',
-          subject: subject,
-          html: html,
-        });
-        
-        if (emailResult.error) {
-          console.error('Failed to send email notification:', emailResult.error);
-          // Don't fail the RSVP submission if email fails
+
+        // Send both guest confirmation and admin notification
+        const emailResults = await emailService.sendRSVPEmails(rsvpEmailData);
+
+        // Log results but don't fail RSVP if emails fail
+        if (emailResults.guestEmail.success) {
+          console.warn(`✅ Guest confirmation sent to ${email}`);
         } else {
-          console.log('Email notification sent successfully:', emailResult.data?.id);
+          console.error(`❌ Guest confirmation failed: ${emailResults.guestEmail.error}`);
+        }
+
+        if (emailResults.adminEmail.success) {
+          console.warn('📧 Admin notification sent successfully');
+        } else {
+          console.error(`❌ Admin notification failed: ${emailResults.adminEmail.error}`);
         }
       }
     } catch (emailError) {
-      console.error('Error sending email notification:', emailError);
-      // Don't fail the RSVP submission if email fails
+      console.error('❌ Email service error:', emailError);
+      // Don't fail the RSVP submission if email service fails
     }
 
-      return new Response(null, {
-          status: 302,
-          headers: {
-              'Location': '/thank-you' // You would need to create a thank-you page
-          }
-      });
-
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: '/thank-you', // You would need to create a thank-you page
+      },
+    });
   } catch (error) {
     console.error('RSVP submission error:', error);
-    
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Failed to submit RSVP. Please try again.' 
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Failed to submit RSVP. Please try again.',
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 };
 
@@ -219,65 +258,78 @@ export const GET: APIRoute = async ({ locals }) => {
   try {
     // Check if we're in development mode
     const isDevMode = !locals.runtime?.env;
-    
+
     if (isDevMode) {
       // Development mode: return mock data
-      return new Response(JSON.stringify({
-        success: true,
-        rsvps: [
-          {
-            id: 1,
-            first_name: 'John',
-            last_name: 'Doe',
-            email: 'john@example.com',
-            attending: 'yes',
-            vegetarian: 0,
-            plus_one: 0,
-            submitted_at: new Date().toISOString()
-          }
-        ]
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: true,
+          rsvps: [
+            {
+              id: 1,
+              first_name: 'John',
+              last_name: 'Doe',
+              email: 'john@example.com',
+              attending: 'yes',
+              vegetarian: 0,
+              plus_one: 0,
+              submitted_at: new Date().toISOString(),
+            },
+          ],
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     if (!locals.runtime?.env?.DB) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Database not available' 
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Database not available',
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
-    const result = await locals.runtime.env.DB.prepare(`
+    const result = await locals.runtime.env.DB.prepare(
+      `
       SELECT id, first_name, last_name, email, attending, vegetarian, 
              plus_one, plus_one_name, message, language, submitted_at
       FROM rsvp 
       ORDER BY submitted_at DESC
-    `).all();
+    `
+    ).all();
 
-    return new Response(JSON.stringify({
-      success: true,
-      rsvps: result.results.map(row => ({
-        ...row,
-        submitted_at: new Date(row.submitted_at).toISOString()
-      }))
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-
+    return new Response(
+      JSON.stringify({
+        success: true,
+        rsvps: result.results.map((row) => ({
+          ...row,
+          submitted_at: new Date(row.submitted_at).toISOString(),
+        })),
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   } catch (error) {
     console.error('Error fetching RSVPs:', error);
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Failed to fetch RSVPs' 
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Failed to fetch RSVPs',
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 };
