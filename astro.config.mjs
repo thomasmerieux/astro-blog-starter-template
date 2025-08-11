@@ -16,6 +16,7 @@ export default defineConfig({
       enabled: true,
       persist: true,
     },
+    imageService: 'compile'
   }),
   i18n: {
     defaultLocale: "en",

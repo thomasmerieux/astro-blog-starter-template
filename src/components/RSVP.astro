@@ -1,13 +1,40 @@
 ---
-import PageWrapper from './PageWrapper.astro';
+import Menu from './Menu.astro';
+import { useTranslations } from '../i18n/utils';
 import type { BaseComponentProps } from '../types';
 
-export interface Props extends BaseComponentProps {}
+export interface Props extends BaseComponentProps {
+  t?: any; // Make t optional
+}
 
 const { lang = 'en', t } = Astro.props;
+
+// Ensure we have a valid translation function
+const validT = t || useTranslations(lang);
 ---
 
-<PageWrapper title={t("rsvp.title")} lang={lang} t={t}>
+<div class="min-h-screen flex flex-col">
+  <!-- Skip link for screen readers -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:border focus:border-gray-300">
+    Skip to main content
+  </a>
+  
+  <!-- Menu - fixed at top -->
+  <header class="flex-shrink-0">
+    <Menu lang={lang} t={validT} />
+  </header>
+  
+  <!-- Main content area -->
+  <main id="main-content" class="flex-1 flex flex-col p-6 md:p-8">
+    <!-- Page Title -->
+    <div class="text-center mb-8 md:mb-12 lg:mb-20 flex-shrink-0">
+      <h1 class="text-gray-800 uppercase tracking-wider font-normal text-2xl sm:text-4xl" style="letter-spacing: 4px;">
+        {validT("rsvp.title")}
+      </h1>
+    </div>
+    
+    <!-- Page Content -->
+    <div class="flex-1 flex justify-center">
   <div class="w-full max-w-3xl">
 
     <form id="rsvp-form" class="space-y-4 md:space-y-6" action="/api/rsvp" method="POST" novalidate>
@@ -16,16 +43,16 @@ const { lang = 'en', t } = Astro.props;
       <!-- Attendance -->
       <fieldset>
         <legend class="form-label">
-          {t("rsvp.form.attendance")} <span class="text-red-500" aria-label="required">*</span>
+          {validT("rsvp.form.attendance")} <span class="text-red-500" aria-label="required">*</span>
         </legend>
         <div class="flex gap-6">
           <label class="flex items-center cursor-pointer">
             <input type="radio" id="attendance-yes" name="attendance" value="yes" class="form-radio" aria-describedby="attendance-error" required>
-            <span class="ml-2 text-gray-700 font-normal">{t("rsvp.form.attendanceYes")}</span>
+            <span class="ml-2 text-gray-700 font-normal">{validT("rsvp.form.attendanceYes")}</span>
           </label>
           <label class="flex items-center cursor-pointer">
             <input type="radio" id="attendance-no" name="attendance" value="no" class="form-radio" aria-describedby="attendance-error" required>
-            <span class="ml-2 text-gray-700 font-normal">{t("rsvp.form.attendanceNo")}</span>
+            <span class="ml-2 text-gray-700 font-normal">{validT("rsvp.form.attendanceNo")}</span>
           </label>
         </div>
         <div id="attendance-error" class="text-red-500 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
@@ -35,7 +62,7 @@ const { lang = 'en', t } = Astro.props;
       <div class="grid md:grid-cols-2 gap-4">
         <div>
           <label for="firstName" class="form-label">
-            {t("rsvp.form.firstName")} <span class="text-red-500" aria-label="required">*</span>
+            {validT("rsvp.form.firstName")} <span class="text-red-500" aria-label="required">*</span>
           </label>
           <input type="text" id="firstName" name="firstName" class="form-input" 
                  aria-describedby="firstName-error" 
@@ -45,7 +72,7 @@ const { lang = 'en', t } = Astro.props;
         </div>
         <div>
           <label for="lastName" class="form-label">
-            {t("rsvp.form.lastName")} <span class="text-red-500" aria-label="required">*</span>
+            {validT("rsvp.form.lastName")} <span class="text-red-500" aria-label="required">*</span>
           </label>
           <input type="text" id="lastName" name="lastName" class="form-input" 
                  aria-describedby="lastName-error" 
@@ -58,7 +85,7 @@ const { lang = 'en', t } = Astro.props;
       <!-- Email -->
       <div>
         <label for="email" class="form-label">
-          {t("rsvp.form.email")} <span class="text-red-500" aria-label="required">*</span>
+          {validT("rsvp.form.email")} <span class="text-red-500" aria-label="required">*</span>
         </label>
         <input type="email" id="email" name="email" class="form-input" 
                aria-describedby="email-error" 
@@ -71,7 +98,7 @@ const { lang = 'en', t } = Astro.props;
       <div>
         <label class="flex items-center cursor-pointer">
           <input type="checkbox" id="vegetarian" name="vegetarian" class="form-checkbox">
-          <span class="ml-2 text-gray-900 font-normal">{t("rsvp.form.vegetarian")}</span>
+          <span class="ml-2 text-gray-900 font-normal">{validT("rsvp.form.vegetarian")}</span>
         </label>
       </div>
 
@@ -117,7 +144,7 @@ const { lang = 'en', t } = Astro.props;
       <!-- Submit Button -->
       <div class="text-center pt-4">
         <button type="submit" id="submit-button" class="btn-primary" aria-describedby="submit-status">
-          <span id="submit-text">{t("rsvp.form.submit")}</span>
+          <span id="submit-text">{validT("rsvp.form.submit")}</span>
           <span id="submit-loading" class="hidden">Submitting...</span>
         </button>
         <div id="submit-status" class="sr-only" aria-live="polite"></div>
@@ -126,7 +153,7 @@ const { lang = 'en', t } = Astro.props;
 
     <!-- Deadline Notice -->
     <div class="mt-8 text-center">
-      <p class="text-gray-500 font-normal">{t("rsvp.deadline")}</p>
+      <p class="text-gray-500 font-normal">{validT("rsvp.deadline")}</p>
     </div>
   </div>
 
@@ -390,4 +417,7 @@ const { lang = 'en', t } = Astro.props;
       }
     });
   </script>
-</PageWrapper>
+    </div>
+  </div>
+  </main>
+</div>

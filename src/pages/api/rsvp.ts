@@ -174,11 +174,11 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     // Send email notification using Resend
     try {
       // Check if we have the Resend API key
-      if (!locals.runtime?.env?.RESEND_API_KEY) {
+      if (!locals.runtime?.env?.RESEND_WEDDING_API_KEY) {
         console.warn('Resend API key not available - skipping email notification');
       } else {
-          console.log('key', locals.runtime.env.RESEND_API_KEY as string)
-          const resend = new Resend(locals.runtime.env.RESEND_API_KEY as string);
+          console.log('key', locals.runtime.env.RESEND_WEDDING_API_KEY as string)
+          const resend = new Resend(locals.runtime.env.RESEND_WEDDING_API_KEY as string);
         
         const emailData = {
           firstName,
