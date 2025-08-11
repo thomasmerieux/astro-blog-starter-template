@@ -67,32 +67,10 @@ function generateRSVPEmailContent(data: {
 export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
 
   console.log("env", locals.runtime.env)
+  console.log("kwy", locals.runtime.env.API_KEY_RESEND)
   try {
     // Check if we're in development mode (no Cloudflare runtime)
     const isDevMode = !locals.runtime?.env;
-    
-    if (isDevMode) {
-      // Development mode: simulate successful submission without database
-      console.log('Development mode: Simulating RSVP submission');
-      
-      const formData = await request.formData();
-      const firstName = formData.get('firstName')?.toString().trim();
-      const lastName = formData.get('lastName')?.toString().trim();
-      const email = formData.get('email')?.toString().trim();
-      const attending = formData.get('attendance')?.toString();
-      
-      console.log('RSVP submitted (dev mode):', { firstName, lastName, email, attending });
-      
-      // Return success response
-      return new Response(JSON.stringify({ 
-        success: true, 
-        message: 'RSVP submitted successfully (development mode)!',
-        id: 'dev-' + Date.now()
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
 
     // Check if we have database access in production mode
     if (!locals.runtime?.env?.DB) {
