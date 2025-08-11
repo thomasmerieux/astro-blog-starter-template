@@ -1,121 +1,119 @@
 ---
 import Menu from './Menu.astro';
-import { useTranslations } from '../i18n/utils';
-import type { BaseComponentProps } from '../types';
+import {useTranslations} from '../i18n/utils';
+import type {BaseComponentProps} from '../types';
 import loftImage from '../assets/loft.jpeg';
 
 export interface Props extends BaseComponentProps {
-  t?: any; // Make t optional
+    t?: any; // Make t optional
 }
 
-const { lang = 'en', t } = Astro.props;
+const {lang = 'en', t} = Astro.props;
 
 // Ensure we have a valid translation function
 const validT = t || useTranslations(lang);
 ---
 
 <div class="min-h-screen flex flex-col">
-  <!-- Skip link for screen readers -->
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:border focus:border-gray-300">
-    Skip to main content
-  </a>
-  
-  <!-- Menu - fixed at top -->
-  <header class="flex-shrink-0">
-    <Menu lang={lang} t={validT} />
-  </header>
-  
-  <!-- Main content area -->
-  <main id="main-content" class="flex-1 flex flex-col p-6 md:p-8">
-    <!-- Page Title -->
-    <div class="text-center mb-8 md:mb-12 lg:mb-20 flex-shrink-0">
-      <h1 class="text-gray-800 uppercase tracking-wider font-normal text-2xl sm:text-4xl" style="letter-spacing: 4px;">
-        {validT("venue.title")}
-      </h1>
-    </div>
-    
-    <!-- Page Content -->
-    <div class="flex-1 flex justify-center">
-  <div class="w-full max-w-7xl">
-    <!-- Split Layout: Content on left, Image/Map on right -->
-    <div class="grid lg:grid-cols-2 gap-12 items-start">
-      
-      <!-- Left Side: Content -->
-      <div class="space-y-8">
-        <!-- Venue Name -->
-        <div>
-          <div class="flex flex-row md:flex-col items-baseline md:items-start gap-2 md:gap-0">
-            <h2 class="text-xl font-normal text-gray-900 uppercase">{validT("venue.name")}</h2>
-            <div class="text-sm text-gray-500 uppercase tracking-wide font-normal">Bucharest, Romania</div>
-          </div>
+    <!-- Skip link for screen readers -->
+    <a href="#main-content"
+       class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:border focus:border-gray-300">
+        Skip to main content
+    </a>
+
+    <!-- Menu - fixed at top -->
+    <header class="flex-shrink-0">
+        <Menu lang={lang} t={validT}/>
+    </header>
+
+    <!-- Main content area -->
+    <main id="main-content" class="flex-1 flex flex-col p-6 md:p-8">
+        <!-- Page Title -->
+        <div class="text-center mb-8 md:mb-12 lg:mb-20 flex-shrink-0">
+            <h1 class="text-gray-800 uppercase tracking-wider font-normal text-2xl sm:text-4xl"
+                style="letter-spacing: 4px;">
+                {validT("venue.title")}
+            </h1>
         </div>
-        
-        <!-- Description with better typography -->
-        <div class="space-y-6 md:mt-8 mt-4">
-          <p class="text-gray-600 font-normal leading-relaxed">
-            {validT("venue.description")}
-          </p>
-          
-          <div class="py-0 px-3 md:p-3 border-l-2 border-[#428bb0]">
-            <h3 class="text-[#428bb0] font-medium mb-0 md:mb-3">Weather Backup Plan</h3>
-            <p class="text-gray-600 font-normal leading-relaxed">
-              {validT("venue.rain")}
-            </p>
-          </div>
-        </div>
-        
-        <!-- Venue Features -->
-        <div class="space-y-4">
-          <h3 class="text-xl font-normal text-gray-900">Venue Features</h3>
-          <div class="grid grid-cols-2 gap-4 text-sm">
-            <div class="flex items-center space-x-2">
-              <div class="w-2 h-2" style="background-color: #428bb0;"></div>
-              <span class="text-gray-600">Outdoor Terrace</span>
+
+        <!-- Page Content -->
+        <div class="flex-1 flex justify-center">
+            <div class="w-full max-w-7xl">
+                <!-- Split Layout: Content on left, Image/Map on right -->
+                <div class="grid lg:grid-cols-2 gap-12 items-start">
+
+                    <!-- Left Side: Content -->
+                    <div class="space-y-8">
+                        <!-- Venue Name -->
+                        <div>
+                            <div class="flex flex-row md:flex-col items-baseline md:items-start gap-2 md:gap-0">
+                                <h2 class="text-xl font-normal text-gray-900 uppercase">{validT("venue.name")}</h2>
+                                <div class="text-sm text-gray-500 uppercase tracking-wide font-normal">Bucharest,
+                                    Romania
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description with better typography -->
+                        <div class="space-y-6 md:mt-8 mt-4">
+                            <p class="text-gray-600 font-normal leading-relaxed">
+                                {validT("venue.description")}
+                            </p>
+
+                            <div class="py-0 px-3 md:p-3 border-l-2 border-[#428bb0]">
+                                <h3 class="text-[#428bb0] font-medium mb-0 md:mb-3">Weather Backup Plan</h3>
+                                <p class="text-gray-600 font-normal leading-relaxed">
+                                    {validT("venue.rain")}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Venue Features -->
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-normal text-gray-900">Venue Features</h3>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2" style="background-color: #428bb0;"></div>
+                                    <span class="text-gray-600">Outdoor Terrace</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2" style="background-color: #428bb0;"></div>
+                                    <span class="text-gray-600">Garden Setting</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2" style="background-color: #428bb0;"></div>
+                                    <span class="text-gray-600">Indoor Backup</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2" style="background-color: #428bb0;"></div>
+                                    <span class="text-gray-600">Parking Available</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Visual Content -->
+                    <div class="space-y-3">
+                        <!-- Venue Image -->
+                        <div class="aspect-[7/3] overflow-hidden bg-gray-200">
+                            <img
+                                    src={loftImage.src + '?w=600&h=400&fit=crop'}
+                                    alt="Loft Diplomat Venue"
+                                    class="w-full h-full object-cover"
+                            />
+                        </div>
+
+                        <!-- Map -->
+                        <div class="aspect-[7/3] overflow-hidden">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2846.488353308172!2d26.077374076503745!3d44.48465939825927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b20332e9df4a57%3A0x6286af0b7433b2a2!2sDiplomat!5e0!3m2!1sen!2sro!4v1754933926048!5m2!1sen!2sro"
+                                    width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-            <div class="flex items-center space-x-2">
-              <div class="w-2 h-2" style="background-color: #428bb0;"></div>
-              <span class="text-gray-600">Garden Setting</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="w-2 h-2" style="background-color: #428bb0;"></div>
-              <span class="text-gray-600">Indoor Backup</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="w-2 h-2" style="background-color: #428bb0;"></div>
-              <span class="text-gray-600">Parking Available</span>
-            </div>
-          </div>
         </div>
-      </div>
-      
-      <!-- Right Side: Visual Content -->
-      <div class="space-y-3">
-        <!-- Venue Image -->
-        <div class="aspect-[7/3] overflow-hidden bg-gray-200">
-          <img 
-            src={loftImage.src + '?w=600&h=400&fit=crop'}
-            alt="Loft Diplomat Venue" 
-            class="w-full h-full object-cover"
-          />
-        </div>
-        
-        <!-- Map -->
-        <div class="aspect-[7/3] overflow-hidden">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2848.0123456789!2d26.0975!3d44.4682!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b201c0b0b0b0b0%3A0x1234567890abcdef!2sLoft%20Diplomat%2C%20Bucharest%2C%20Romania!5e0!3m2!1sen!2sus!4v1645123456789!5m2!1sen!2sus"
-            width="100%"
-            height="100%"
-            style="border:0;"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-    </div>
-  </div>
-  </main>
+</div>
+</main>
 </div>
