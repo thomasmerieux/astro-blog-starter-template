@@ -55,7 +55,7 @@ async function checkRateLimit(DB: any, email: string, ipAddress: string): Promis
     .bind(email, oneHourAgo)
     .first();
 
-  if (emailCount.count >= 3) return false;
+  if (emailCount.count >= 10) return false;
 
   // Check submissions from this IP in the last hour
   const ipCount = await DB.prepare(
@@ -64,9 +64,7 @@ async function checkRateLimit(DB: any, email: string, ipAddress: string): Promis
     .bind(ipAddress, oneHourAgo)
     .first();
 
-  if (ipCount.count >= 5) return false;
-
-  return true;
+  return ipCount.count < 10;
 }
 
 export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
