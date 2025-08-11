@@ -189,7 +189,7 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
         const emailService = new EmailService({
           apiKey: apiKey as string,
           from: 'Dana & Thomas <wedding@danaandthomas.party>',
-          adminEmail: 'thomas.merieux@gmail.com', // Replace with your actual admin email
+          adminEmail: locals.runtime.env.ADMIN_EMAILS,
         });
 
         // Prepare RSVP data for email templates
