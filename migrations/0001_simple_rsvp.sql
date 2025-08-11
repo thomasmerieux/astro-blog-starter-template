@@ -12,5 +12,6 @@ CREATE TABLE IF NOT EXISTS rsvp (
     language TEXT DEFAULT 'en',
     submitted_at INTEGER NOT NULL,
     ip_address TEXT,
-    user_agent TEXT
+    user_agent TEXT,
+    guest_first_name TEXT
 );

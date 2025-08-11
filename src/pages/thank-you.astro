@@ -1,8 +1,13 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 import ThankYou from '../components/ThankYou.astro';
 import { useTranslations } from '../i18n/utils';
 
-const t = useTranslations('en');
+const lang = 'en';
+const t = useTranslations(lang);
+const pageTitle = `${t('thankYou.title')} - DANA & THOMAS`;
 ---
 
-<ThankYou lang="en" t={t} />
+<BaseLayout title={pageTitle} lang={lang}>
+  <ThankYou lang={lang} t={t} />
+</BaseLayout>

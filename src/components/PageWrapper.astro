@@ -1,10 +1,16 @@
 ---
 import Menu from './Menu.astro';
+import { useTranslations } from '../i18n/utils';
 import type { PageWrapperProps } from '../types';
 
-export interface Props extends PageWrapperProps {}
+export interface Props extends PageWrapperProps {
+  t?: any; // Make t optional
+}
 
 const { title, lang = 'en', t } = Astro.props;
+
+// Ensure we have a valid translation function
+const validT = t || useTranslations(lang);
 ---
 
 <div class="min-h-screen flex flex-col">
@@ -15,7 +21,7 @@ const { title, lang = 'en', t } = Astro.props;
   
   <!-- Menu - fixed at top -->
   <header class="flex-shrink-0">
-    <Menu lang={lang} t={t} />
+    <Menu lang={lang} t={validT} />
   </header>
   
   <!-- Main content area -->

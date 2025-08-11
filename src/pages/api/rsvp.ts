@@ -16,8 +16,9 @@ function generateRSVPEmailContent(data: {
   attending: string;
   vegetarian: number;
   plusOne: number;
-  plusOneName?: string | null;
-  message?: string | null;
+  guestFirstName?: string | null;
+  guestLastName?: string | null;
+  plusOneVegetarian?: number;
   language: string;
 }) {
   const subject = `New RSVP: ${data.firstName} ${data.lastName} - ${data.attending === 'yes' ? 'Attending' : 'Not Attending'}`;
@@ -41,15 +42,9 @@ function generateRSVPEmailContent(data: {
       
       ${data.plusOne ? `
         <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #92400e;">Plus One Information</h3>
-          <p><strong>Guest Name:</strong> ${data.plusOneName || 'Not provided'}</p>
-        </div>
-      ` : ''}
-      
-      ${data.message ? `
-        <div style="background: #ecfdf5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #065f46;">Message from Guest</h3>
-          <p style="font-style: italic;">"${data.message}"</p>
+          <h3 style="margin-top: 0; color: #92400e;">Guest Information</h3>
+          <p><strong>Guest Name:</strong> ${data.guestFirstName || ''} ${data.guestLastName || ''}</p>
+          <p><strong>Guest Vegetarian Meal:</strong> ${data.plusOneVegetarian ? 'Yes' : 'No'}</p>
         </div>
       ` : ''}
       
@@ -71,7 +66,33 @@ function generateRSVPEmailContent(data: {
 
 export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
   try {
-    // Check if we have database access
+    // Check if we're in development mode (no Cloudflare runtime)
+    const isDevMode = !locals.runtime?.env;
+    
+    if (isDevMode) {
+      // Development mode: simulate successful submission without database
+      console.log('Development mode: Simulating RSVP submission');
+      
+      const formData = await request.formData();
+      const firstName = formData.get('firstName')?.toString().trim();
+      const lastName = formData.get('lastName')?.toString().trim();
+      const email = formData.get('email')?.toString().trim();
+      const attending = formData.get('attendance')?.toString();
+      
+      console.log('RSVP submitted (dev mode):', { firstName, lastName, email, attending });
+      
+      // Return success response
+      return new Response(JSON.stringify({ 
+        success: true, 
+        message: 'RSVP submitted successfully (development mode)!',
+        id: 'dev-' + Date.now()
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Check if we have database access in production mode
     if (!locals.runtime?.env?.DB) {
       return new Response(JSON.stringify({ 
         success: false, 
@@ -92,10 +113,9 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     const attending = formData.get('attendance')?.toString();
     const vegetarian = formData.get('vegetarian') === 'on' ? 1 : 0;
     const plusOne = formData.get('plusOne') === 'on' ? 1 : 0;
-    const plusOneName = plusOne ? 
-      `${formData.get('plusOneFirstName')?.toString().trim()} ${formData.get('plusOneLastName')?.toString().trim()}`.trim() 
-      : null;
-    const message = formData.get('message')?.toString().trim() || null;
+    const guestFirstName = formData.get('guestFirstName')?.toString().trim() || null;
+    const guestLastName = formData.get('guestLastName')?.toString().trim() || null;
+    const plusOneVegetarian = formData.get('plusOneVegetarian') === 'on' ? 1 : 0;
     const language = formData.get('language')?.toString() || 'en';
 
     // Validation
@@ -105,7 +125,7 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     if (!email) errors.push('Email is required');
     else if (!validateEmail(email)) errors.push('Please enter a valid email address');
     if (!attending || !['yes', 'no'].includes(attending)) errors.push('Please select your attendance');
-    if (plusOne && !plusOneName) errors.push('Plus one name is required');
+    if (plusOne && (!guestFirstName || !guestLastName)) errors.push('Guest name is required');
 
     console.log('hello')
     if (errors.length > 0) {
@@ -126,9 +146,9 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     const result = await DB.prepare(`
       INSERT INTO rsvp (
         first_name, last_name, email, attending, vegetarian, 
-        plus_one, plus_one_name, message, language, submitted_at, 
-        ip_address, user_agent
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        plus_one, guest_first_name, guest_last_name, plus_one_vegetarian, 
+        language, submitted_at, ip_address, user_agent
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       firstName,
       lastName, 
@@ -136,8 +156,9 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
       attending,
       vegetarian,
       plusOne,
-      plusOneName,
-      message,
+      guestFirstName,
+      guestLastName,
+      plusOneVegetarian,
       language,
       submittedAt,
       clientAddress,
@@ -166,8 +187,9 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
           attending,
           vegetarian,
           plusOne,
-          plusOneName,
-          message,
+          guestFirstName,
+          guestLastName,
+          plusOneVegetarian,
           language
         };
         
@@ -192,14 +214,12 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
       // Don't fail the RSVP submission if email fails
     }
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      message: 'RSVP submitted successfully!',
-      id: result.meta.last_row_id
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
+      return new Response(null, {
+          status: 302,
+          headers: {
+              'Location': '/thank-you' // You would need to create a thank-you page
+          }
+      });
 
   } catch (error) {
     console.error('RSVP submission error:', error);
@@ -217,6 +237,31 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
 // Get all RSVPs (for testing)
 export const GET: APIRoute = async ({ locals }) => {
   try {
+    // Check if we're in development mode
+    const isDevMode = !locals.runtime?.env;
+    
+    if (isDevMode) {
+      // Development mode: return mock data
+      return new Response(JSON.stringify({
+        success: true,
+        rsvps: [
+          {
+            id: 1,
+            first_name: 'John',
+            last_name: 'Doe',
+            email: 'john@example.com',
+            attending: 'yes',
+            vegetarian: 0,
+            plus_one: 0,
+            submitted_at: new Date().toISOString()
+          }
+        ]
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     if (!locals.runtime?.env?.DB) {
       return new Response(JSON.stringify({ 
         success: false, 

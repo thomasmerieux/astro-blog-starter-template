@@ -11,6 +11,7 @@ export async function getStaticPaths() {
 
 const { lang } = Astro.params as { lang: Languages };
 const t = useTranslations(lang);
+export const prerender = true;
 ---
 
 <Layout lang={lang} t={t} />

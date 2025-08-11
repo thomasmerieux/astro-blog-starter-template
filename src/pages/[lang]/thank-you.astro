@@ -2,16 +2,10 @@
 import ThankYou from '../../components/ThankYou.astro';
 import { useTranslations, type Languages } from '../../i18n/utils';
 
-export function getStaticPaths() {
-  return [
-    { params: { lang: 'en' } },
-    { params: { lang: 'fr' } },
-    { params: { lang: 'ro' } },
-  ];
-}
-
 const { lang } = Astro.params as { lang: Languages };
-const t = useTranslations(lang);
+// Ensure lang is valid, fallback to 'en'
+const validLang = (lang && ['en', 'fr', 'ro'].includes(lang)) ? lang as Languages : 'en';
+const t = useTranslations(validLang);
 ---
 
-<ThankYou lang={lang} t={t} />
+<ThankYou lang={validLang} t={t} />

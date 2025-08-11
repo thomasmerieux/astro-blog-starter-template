@@ -87,22 +87,22 @@ const { lang = 'en', t } = Astro.props;
       <div id="plusOneFields" class="hidden space-y-4">
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label for="plusOneFirstName" class="form-label">
+            <label for="guestFirstName" class="form-label">
               Guest First Name <span class="text-red-500" aria-label="required when bringing a guest">*</span>
             </label>
-            <input type="text" id="plusOneFirstName" name="plusOneFirstName" class="form-input"
-                   aria-describedby="plusOneFirstName-error"
+            <input type="text" id="guestFirstName" name="guestFirstName" class="form-input"
+                   aria-describedby="guestFirstName-error"
                    autocomplete="given-name">
-            <div id="plusOneFirstName-error" class="text-red-500 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
+            <div id="guestFirstName-error" class="text-red-500 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
           </div>
           <div>
-            <label for="plusOneLastName" class="form-label">
+            <label for="guestLastName" class="form-label">
               Guest Last Name <span class="text-red-500" aria-label="required when bringing a guest">*</span>
             </label>
-            <input type="text" id="plusOneLastName" name="plusOneLastName" class="form-input"
-                   aria-describedby="plusOneLastName-error"
+            <input type="text" id="guestLastName" name="guestLastName" class="form-input"
+                   aria-describedby="guestLastName-error"
                    autocomplete="family-name">
-            <div id="plusOneLastName-error" class="text-red-500 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
+            <div id="guestLastName-error" class="text-red-500 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
           </div>
         </div>
         <!-- Plus One Vegetarian Option -->
@@ -112,16 +112,6 @@ const { lang = 'en', t } = Astro.props;
             <span class="ml-2 text-gray-700 font-normal">Guest Vegetarian meal</span>
           </label>
         </div>
-      </div>
-
-      <!-- Message Field -->
-      <div>
-        <label for="message" class="form-label">
-          Message for the Couple (optional)
-        </label>
-        <textarea id="message" name="message" class="form-input" rows="3"
-                  placeholder="Share your excitement or well wishes..."
-                  maxlength="500"></textarea>
       </div>
 
       <!-- Submit Button -->
@@ -153,8 +143,8 @@ const { lang = 'en', t } = Astro.props;
       
       const plusOneCheckbox = document.getElementById('plusOneCheckbox');
       const plusOneFields = document.getElementById('plusOneFields');
-      const plusOneFirstName = document.querySelector('input[name="plusOneFirstName"]');
-      const plusOneLastName = document.querySelector('input[name="plusOneLastName"]');
+      const guestFirstName = document.querySelector('input[name="guestFirstName"]');
+      const guestLastName = document.querySelector('input[name="guestLastName"]');
 
       // Form validation functions
       function validateEmail(email) {
@@ -227,32 +217,32 @@ const { lang = 'en', t } = Astro.props;
           if (this.checked) {
             plusOneFields.classList.remove('hidden');
             plusOneFields.setAttribute('aria-hidden', 'false');
-            // Make +1 name fields required when shown
-            if (plusOneFirstName) {
-              plusOneFirstName.required = true;
-              plusOneFirstName.setAttribute('aria-required', 'true');
+            // Make guest name fields required when shown
+            if (guestFirstName) {
+              guestFirstName.required = true;
+              guestFirstName.setAttribute('aria-required', 'true');
             }
-            if (plusOneLastName) {
-              plusOneLastName.required = true;
-              plusOneLastName.setAttribute('aria-required', 'true');
+            if (guestLastName) {
+              guestLastName.required = true;
+              guestLastName.setAttribute('aria-required', 'true');
             }
-            // Focus first plus one field
-            setTimeout(() => plusOneFirstName?.focus(), 100);
+            // Focus first guest field
+            setTimeout(() => guestFirstName?.focus(), 100);
           } else {
             plusOneFields.classList.add('hidden');
             plusOneFields.setAttribute('aria-hidden', 'true');
             // Remove required attribute when hidden
-            if (plusOneFirstName) {
-              plusOneFirstName.required = false;
-              plusOneFirstName.removeAttribute('aria-required');
-              plusOneFirstName.value = '';
-              clearFieldError('plusOneFirstName');
+            if (guestFirstName) {
+              guestFirstName.required = false;
+              guestFirstName.removeAttribute('aria-required');
+              guestFirstName.value = '';
+              clearFieldError('guestFirstName');
             }
-            if (plusOneLastName) {
-              plusOneLastName.required = false;
-              plusOneLastName.removeAttribute('aria-required');
-              plusOneLastName.value = '';
-              clearFieldError('plusOneLastName');
+            if (guestLastName) {
+              guestLastName.required = false;
+              guestLastName.removeAttribute('aria-required');
+              guestLastName.value = '';
+              clearFieldError('guestLastName');
             }
             // Clear vegetarian checkbox for +1
             const plusOneVegetarian = document.querySelector('input[name="plusOneVegetarian"]');
@@ -303,14 +293,14 @@ const { lang = 'en', t } = Astro.props;
             hasErrors = true;
           }
           
-          // Validate plus one fields if plus one is checked
+          // Validate guest fields if plus one is checked
           if (formData.get('plusOne') === 'on') {
-            if (!formData.get('plusOneFirstName')?.toString().trim()) {
-              showFieldError('plusOneFirstName', 'Guest first name is required');
+            if (!formData.get('guestFirstName')?.toString().trim()) {
+              showFieldError('guestFirstName', 'Guest first name is required');
               hasErrors = true;
             }
-            if (!formData.get('plusOneLastName')?.toString().trim()) {
-              showFieldError('plusOneLastName', 'Guest last name is required');
+            if (!formData.get('guestLastName')?.toString().trim()) {
+              showFieldError('guestLastName', 'Guest last name is required');
               hasErrors = true;
             }
           }
@@ -333,26 +323,46 @@ const { lang = 'en', t } = Astro.props;
           try {
             const response = await fetch('/api/rsvp', {
               method: 'POST',
-              body: formData
+              body: formData,
+              redirect: 'manual' // Handle redirects manually
             });
             
-            const result = await response.json();
-            
-            if (result.success) {
-              // Redirect to thank you page
-              const currentLang = document.documentElement.lang || 'en';
+            // Check if response is a redirect
+            if (response.type === 'opaqueredirect' || response.status === 302) {
+              // Success! The API redirected us, so redirect to thank you page
+              const pathLang = window.location.pathname.split('/')[1];
+              const currentLang = ['en', 'fr', 'ro'].includes(pathLang) ? pathLang : 'en';
               const thankYouUrl = currentLang === 'en' ? '/thank-you' : `/${currentLang}/thank-you`;
+              console.log('RSVP submitted successfully, redirecting to:', thankYouUrl);
               window.location.href = thankYouUrl;
-            } else {
-              if (result.errors) {
-                // Show field-specific errors
-                for (const [field, error] of Object.entries(result.errors)) {
-                  showFieldError(field, error);
+            } else if (response.ok) {
+              // Try to parse as JSON for success response
+              try {
+                const result = await response.json();
+                if (result.success) {
+                  const pathLang = window.location.pathname.split('/')[1];
+                  const currentLang = ['en', 'fr', 'ro'].includes(pathLang) ? pathLang : 'en';
+                  const thankYouUrl = currentLang === 'en' ? '/thank-you' : `/${currentLang}/thank-you`;
+                  window.location.href = thankYouUrl;
+                } else {
+                  handleErrorResponse(result);
                 }
-              } else {
-                showErrorMessage(result.error || 'An unexpected error occurred');
+              } catch (parseError) {
+                // If JSON parsing fails but response is ok, assume success
+                const pathLang = window.location.pathname.split('/')[1];
+                const currentLang = ['en', 'fr', 'ro'].includes(pathLang) ? pathLang : 'en';
+                const thankYouUrl = currentLang === 'en' ? '/thank-you' : `/${currentLang}/thank-you`;
+                window.location.href = thankYouUrl;
               }
-              submitStatus.textContent = 'Error submitting RSVP';
+            } else {
+              // Handle error response
+              try {
+                const result = await response.json();
+                handleErrorResponse(result);
+              } catch (parseError) {
+                showErrorMessage('An unexpected error occurred');
+                submitStatus.textContent = 'Error submitting RSVP';
+              }
             }
           } catch (error) {
             console.error('RSVP submission error:', error);
@@ -363,6 +373,18 @@ const { lang = 'en', t } = Astro.props;
             submitButton.disabled = false;
             submitText.classList.remove('hidden');
             submitLoading.classList.add('hidden');
+          }
+          
+          function handleErrorResponse(result) {
+            if (result.errors) {
+              // Show field-specific errors
+              for (const [field, error] of Object.entries(result.errors)) {
+                showFieldError(field, error);
+              }
+            } else {
+              showErrorMessage(result.error || 'An unexpected error occurred');
+            }
+            submitStatus.textContent = 'Error submitting RSVP';
           }
         });
       }

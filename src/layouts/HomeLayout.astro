@@ -2,13 +2,14 @@
 import { ViewTransitions } from 'astro:transitions';
 import '../styles/global.css';
 import Menu from '../components/Menu.astro';
+import { useTranslations } from '../i18n/utils';
 import type { TranslationFunction, Languages } from '../types';
 
 export interface Props {
   title?: string;
   description?: string;
   lang?: Languages;
-  t: TranslationFunction;
+  t?: TranslationFunction;
 }
 
 const { 
@@ -17,6 +18,9 @@ const {
   lang = "en",
   t
 } = Astro.props;
+
+// Ensure we have a valid translation function
+const validT = t || useTranslations(lang);
 ---
 
 <!doctype html>
@@ -47,7 +51,7 @@ const {
     <div class="min-h-screen flex flex-col">
       <!-- Menu - fixed at top -->
       <header class="flex-shrink-0">
-        <Menu lang={lang} t={t} />
+        <Menu lang={lang} t={validT} />
       </header>
       
       <!-- Home content - vertically centered with no title -->

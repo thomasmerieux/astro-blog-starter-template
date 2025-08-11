@@ -14,6 +14,7 @@ const { lang } = Astro.params as { lang: Languages };
 const t = useTranslations(lang);
 
 const pageTitle = `${t('accommodation.title')} - DANA & THOMAS`;
+export const prerender = true;
 ---
 
 <BaseLayout title={pageTitle} lang={lang}>
