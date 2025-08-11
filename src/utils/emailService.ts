@@ -172,7 +172,7 @@ class EmailService {
       const result = await this.resend.emails.send({
         from: this.config.from,
         to: this.config.adminEmail,
-        subject: `[TEST] ${subject}`,
+        subject: `${subject}`,
         html,
         tags: [{ name: 'type', value: 'test' }],
       });
