@@ -9,19 +9,8 @@ const { lang = 'en', t } = Astro.props;
 
 <PageWrapper title={t("rsvp.title")} lang={lang} t={t}>
   <div class="w-full max-w-3xl">
-    <!-- Success/Error Messages -->
-    <div id="form-messages" class="mb-6 hidden">
-      <div id="success-message" class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4 hidden" role="alert">
-        <p class="font-medium">Thank you for your RSVP!</p>
-        <p class="text-sm">We've received your response and look forward to celebrating with you.</p>
-      </div>
-      <div id="error-message" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 hidden" role="alert">
-        <p class="font-medium">There was an error submitting your RSVP</p>
-        <p id="error-details" class="text-sm"></p>
-      </div>
-    </div>
 
-    <form id="rsvp-form" class="space-y-4 md:space-y-6" novalidate>
+    <form id="rsvp-form" class="space-y-4 md:space-y-6" action="/api/rsvp" method="POST" novalidate>
       <!-- Hidden language field -->
       <input type="hidden" name="language" value={lang}>
       <!-- Attendance -->
@@ -152,16 +141,15 @@ const { lang = 'en', t } = Astro.props;
   </div>
 
   <script>
+    console.log('RSVP script loading...');
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, initializing form...');
       const form = document.getElementById('rsvp-form');
+      console.log('Form element:', form);
       const submitButton = document.getElementById('submit-button');
       const submitText = document.getElementById('submit-text');
       const submitLoading = document.getElementById('submit-loading');
       const submitStatus = document.getElementById('submit-status');
-      const successMessage = document.getElementById('success-message');
-      const errorMessage = document.getElementById('error-message');
-      const errorDetails = document.getElementById('error-details');
-      const formMessages = document.getElementById('form-messages');
       
       const plusOneCheckbox = document.getElementById('plusOneCheckbox');
       const plusOneFields = document.getElementById('plusOneFields');
@@ -217,26 +205,20 @@ const { lang = 'en', t } = Astro.props;
         });
       }
 
-      function showMessage(type, message) {
-        formMessages.classList.remove('hidden');
-        
-        if (type === 'success') {
-          successMessage.classList.remove('hidden');
-          errorMessage.classList.add('hidden');
-        } else {
-          errorMessage.classList.remove('hidden');
-          successMessage.classList.add('hidden');
-          errorDetails.textContent = message;
+      function showErrorMessage(message) {
+        // Create a temporary error display for non-field errors
+        const existingError = document.getElementById('general-error');
+        if (existingError) {
+          existingError.remove();
         }
         
-        // Scroll to message
-        formMessages.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-
-      function hideMessages() {
-        formMessages.classList.add('hidden');
-        successMessage.classList.add('hidden');
-        errorMessage.classList.add('hidden');
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'general-error';
+        errorDiv.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800';
+        errorDiv.textContent = message;
+        
+        form.appendChild(errorDiv);
+        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
 
       // Plus one functionality
@@ -283,10 +265,14 @@ const { lang = 'en', t } = Astro.props;
       if (form) {
         form.addEventListener('submit', async function(e) {
           e.preventDefault();
+          console.log('Form submission intercepted');
           
-          // Clear previous errors and messages
+          // Clear previous errors
           clearAllErrors();
-          hideMessages();
+          const existingError = document.getElementById('general-error');
+          if (existingError) {
+            existingError.remove();
+          }
           
           // Validate form
           let hasErrors = false;
@@ -353,14 +339,10 @@ const { lang = 'en', t } = Astro.props;
             const result = await response.json();
             
             if (result.success) {
-              showMessage('success');
-              form.reset();
-              // Hide plus one fields if they were shown
-              if (plusOneFields && !plusOneFields.classList.contains('hidden')) {
-                plusOneFields.classList.add('hidden');
-                plusOneFields.setAttribute('aria-hidden', 'true');
-              }
-              submitStatus.textContent = 'RSVP submitted successfully!';
+              // Redirect to thank you page
+              const currentLang = document.documentElement.lang || 'en';
+              const thankYouUrl = currentLang === 'en' ? '/thank-you' : `/${currentLang}/thank-you`;
+              window.location.href = thankYouUrl;
             } else {
               if (result.errors) {
                 // Show field-specific errors
@@ -368,13 +350,13 @@ const { lang = 'en', t } = Astro.props;
                   showFieldError(field, error);
                 }
               } else {
-                showMessage('error', result.error || 'An unexpected error occurred');
+                showErrorMessage(result.error || 'An unexpected error occurred');
               }
               submitStatus.textContent = 'Error submitting RSVP';
             }
           } catch (error) {
             console.error('RSVP submission error:', error);
-            showMessage('error', 'Network error. Please check your connection and try again.');
+            showErrorMessage('Network error. Please check your connection and try again.');
             submitStatus.textContent = 'Network error occurred';
           } finally {
             // Reset button state

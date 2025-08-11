@@ -1,0 +1,8 @@
+---
+import ThankYou from '../components/ThankYou.astro';
+import { useTranslations } from '../i18n/utils';
+
+const t = useTranslations('en');
+---
+
+<ThankYou lang="en" t={t} />

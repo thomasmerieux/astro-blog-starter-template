@@ -1,10 +1,72 @@
 import type { APIRoute } from 'astro';
+import { Resend } from 'resend';
 export const prerender = false;
 
 // Simple email validation
 function validateEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
+}
+
+// Generate email content for RSVP notification
+function generateRSVPEmailContent(data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  attending: string;
+  vegetarian: number;
+  plusOne: number;
+  plusOneName?: string | null;
+  message?: string | null;
+  language: string;
+}) {
+  const subject = `New RSVP: ${data.firstName} ${data.lastName} - ${data.attending === 'yes' ? 'Attending' : 'Not Attending'}`;
+  
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h2 style="color: #2563eb; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">
+        New RSVP Submission
+      </h2>
+      
+      <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="margin-top: 0; color: #1f2937;">Guest Information</h3>
+        <p><strong>Name:</strong> ${data.firstName} ${data.lastName}</p>
+        <p><strong>Email:</strong> ${data.email}</p>
+        <p><strong>Attendance:</strong> <span style="color: ${data.attending === 'yes' ? '#10b981' : '#ef4444'}; font-weight: bold;">
+          ${data.attending === 'yes' ? '✓ Attending' : '✗ Not Attending'}
+        </span></p>
+        <p><strong>Vegetarian Meal:</strong> ${data.vegetarian ? 'Yes' : 'No'}</p>
+        <p><strong>Language:</strong> ${data.language.toUpperCase()}</p>
+      </div>
+      
+      ${data.plusOne ? `
+        <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #92400e;">Plus One Information</h3>
+          <p><strong>Guest Name:</strong> ${data.plusOneName || 'Not provided'}</p>
+        </div>
+      ` : ''}
+      
+      ${data.message ? `
+        <div style="background: #ecfdf5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #065f46;">Message from Guest</h3>
+          <p style="font-style: italic;">"${data.message}"</p>
+        </div>
+      ` : ''}
+      
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 14px;">
+        <p>This RSVP was submitted on ${new Date().toLocaleString('en-US', { 
+          timeZone: 'UTC',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })} UTC</p>
+      </div>
+    </div>
+  `;
+  
+  return { subject, html };
 }
 
 export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
@@ -87,6 +149,48 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     }
 
     console.log('RSVP submitted successfully:', result.meta.last_row_id);
+
+    // Send email notification using Resend
+    try {
+      // Check if we have the Resend API key
+      if (!locals.runtime?.env?.SECRET) {
+        console.warn('Resend API key not available - skipping email notification');
+      } else {
+          console.log('key', locals.runtime.env.SECRET as string)
+          const resend = new Resend(locals.runtime.env.SECRET as string);
+        
+        const emailData = {
+          firstName,
+          lastName,
+          email,
+          attending,
+          vegetarian,
+          plusOne,
+          plusOneName,
+          message,
+          language
+        };
+        
+        const { subject, html } = generateRSVPEmailContent(emailData);
+        
+        const emailResult = await resend.emails.send({
+            from: 'information@danaandthomas.party',
+            to: 'thomas.merieux@gmail.com',
+          subject: subject,
+          html: html,
+        });
+        
+        if (emailResult.error) {
+          console.error('Failed to send email notification:', emailResult.error);
+          // Don't fail the RSVP submission if email fails
+        } else {
+          console.log('Email notification sent successfully:', emailResult.data?.id);
+        }
+      }
+    } catch (emailError) {
+      console.error('Error sending email notification:', emailError);
+      // Don't fail the RSVP submission if email fails
+    }
 
     return new Response(JSON.stringify({ 
       success: true, 

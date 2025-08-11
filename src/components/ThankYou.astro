@@ -1,0 +1,77 @@
+---
+import PageWrapper from './PageWrapper.astro';
+import type { BaseComponentProps } from '../types';
+
+export interface Props extends BaseComponentProps {}
+
+const { lang = 'en', t } = Astro.props;
+---
+
+<PageWrapper title={t("thankYou.title")} lang={lang} t={t}>
+  <div class="w-full max-w-2xl mx-auto text-center">
+    <!-- Success Icon -->
+    <div class="mb-8">
+      <div class="mx-auto w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
+        <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Thank You Message -->
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+      {t("thankYou.title")}
+    </h1>
+    
+    <div class="text-lg md:text-xl text-gray-600 mb-8 space-y-4">
+      <p>{t("thankYou.message")}</p>
+      <p class="text-base">{t("thankYou.details")}</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <!-- Home Button -->
+      <a 
+        href={lang === 'en' ? '/' : `/${lang}/`}
+        class="inline-flex items-center px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        {t("thankYou.backToHome")}
+      </a>
+
+      <!-- Schedule Button -->
+      <a 
+        href={lang === 'en' ? '/schedule' : `/${lang}/schedule`}
+        class="inline-flex items-center px-8 py-3 bg-white hover:bg-gray-50 text-blue-600 font-medium rounded-lg border-2 border-blue-600 transition-colors duration-200"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        {t("thankYou.viewSchedule")}
+      </a>
+    </div>
+
+    <!-- Additional Info -->
+    <div class="mt-12 p-6 bg-gray-50 rounded-lg">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">
+        {t("thankYou.nextSteps.title")}
+      </h3>
+      <div class="text-left text-gray-600 space-y-2">
+        <p class="flex items-start">
+          <span class="text-blue-600 mr-2">•</span>
+          {t("thankYou.nextSteps.step1")}
+        </p>
+        <p class="flex items-start">
+          <span class="text-blue-600 mr-2">•</span>
+          {t("thankYou.nextSteps.step2")}
+        </p>
+        <p class="flex items-start">
+          <span class="text-blue-600 mr-2">•</span>
+          {t("thankYou.nextSteps.step3")}
+        </p>
+      </div>
+    </div>
+  </div>
+</PageWrapper>
