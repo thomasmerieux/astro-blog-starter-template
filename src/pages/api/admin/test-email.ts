@@ -1,10 +1,11 @@
 import type { APIRoute } from 'astro';
 import { EmailService } from '../../../utils/emailService';
+import type { AstroCookies } from '../../../types/api';
 
 export const prerender = false;
 
 // Helper function to check admin authentication
-function isAdminAuthenticated(cookies: any): boolean {
+function isAdminAuthenticated(cookies: AstroCookies): boolean {
   return cookies.get('admin_session')?.value === 'authenticated';
 }
 

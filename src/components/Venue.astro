@@ -2,6 +2,7 @@
 import Menu from './Menu.astro';
 import { useTranslations } from '../i18n/utils';
 import type { BaseComponentProps } from '../types';
+import { Image } from 'astro:assets';
 import loftImage from '../assets/loft.jpeg';
 
 export interface Props extends BaseComponentProps {
@@ -101,9 +102,13 @@ const validT = t || useTranslations(lang);
           <div class="space-y-3">
             <!-- Venue Image -->
             <div class="aspect-[7/3] overflow-hidden bg-gray-200">
-              <img
-                src={loftImage.src + '?w=600&h=400&fit=crop'}
+              <Image
+                src={loftImage}
                 alt={validT('venue.imageAlt')}
+                width={700}
+                height={300}
+                loading="lazy"
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 class="w-full h-full object-cover"
               />
             </div>

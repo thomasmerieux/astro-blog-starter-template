@@ -1,0 +1,50 @@
+---
+import PageWrapper from '../components/PageWrapper.astro';
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.params.lang as string || 'en';
+const t = useTranslations(lang);
+---
+
+<PageWrapper lang={lang} title="Server Error" t={t}>
+  <div class="min-h-screen flex items-center justify-center bg-gray-50">
+    <div class="max-w-md mx-auto text-center px-6">
+      <div class="mb-8">
+        <div class="text-6xl font-light text-red-400 mb-4">500</div>
+        <h1 class="text-2xl font-normal text-gray-900 mb-4">
+          {t('error.serverError')}
+        </h1>
+        <p class="text-gray-600 leading-relaxed mb-8">
+          {t('error.serverErrorDescription')}
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <button 
+          onclick="window.location.reload()"
+          class="btn-primary inline-block cursor-pointer border-none"
+        >
+          {t('error.tryAgain')}
+        </button>
+        
+        <div class="pt-2">
+          <a 
+            href={`/${lang}`}
+            class="text-[#428bb0] hover:underline text-sm"
+          >
+            {t('common.backToHome')}
+          </a>
+        </div>
+
+        <div class="pt-6 border-t border-gray-200">
+          <p class="text-xs text-gray-500 mb-2">
+            {t('error.persistentError')}
+          </p>
+          <p class="text-xs text-gray-400">
+            Error ID: {new Date().getTime().toString(36)}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</PageWrapper>

@@ -1,9 +1,10 @@
 import type { APIRoute } from 'astro';
+import type { AstroCookies, CloudflareD1Database, RSVPRow, RSVPStats } from '../../../types/api';
 
 export const prerender = false;
 
 // Helper function to check admin authentication
-function isAdminAuthenticated(cookies: any): boolean {
+function isAdminAuthenticated(cookies: AstroCookies): boolean {
   return cookies.get('admin_session')?.value === 'authenticated';
 }
 
@@ -37,7 +38,7 @@ export const GET: APIRoute = async ({ cookies, locals, url }) => {
       );
     }
 
-    const DB = locals.runtime.env.DB;
+    const DB = locals.runtime.env.DB as CloudflareD1Database;
 
     // Get query parameters for filtering
     const attending = url.searchParams.get('attending');
@@ -54,7 +55,7 @@ export const GET: APIRoute = async ({ cookies, locals, url }) => {
       WHERE 1=1
     `;
 
-    const params: any[] = [];
+    const params: (string | number)[] = [];
 
     if (attending && attending !== 'all') {
       query += ' AND attending = ?';
@@ -74,10 +75,10 @@ export const GET: APIRoute = async ({ cookies, locals, url }) => {
 
     const result = await DB.prepare(query)
       .bind(...params)
-      .all();
+      .all<RSVPRow>();
 
     // Calculate statistics
-    const stats = {
+    const stats: RSVPStats = {
       total: result.results.length,
       attending: result.results.filter((r) => r.attending === 'yes').length,
       notAttending: result.results.filter((r) => r.attending === 'no').length,

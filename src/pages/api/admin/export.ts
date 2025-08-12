@@ -1,9 +1,10 @@
 import type { APIRoute } from 'astro';
+import type { AstroCookies, CloudflareD1Database, RSVPRow } from '../../../types/api';
 
 export const prerender = false;
 
 // Helper function to check admin authentication
-function isAdminAuthenticated(cookies: any): boolean {
+function isAdminAuthenticated(cookies: AstroCookies): boolean {
   return cookies.get('admin_session')?.value === 'authenticated';
 }
 
@@ -19,7 +20,7 @@ export const GET: APIRoute = async ({ cookies, locals, url }) => {
       return new Response('Database not available', { status: 500 });
     }
 
-    const DB = locals.runtime.env.DB;
+    const DB = locals.runtime.env.DB as CloudflareD1Database;
     const format = url.searchParams.get('format') || 'csv';
 
     const result = await DB.prepare(
@@ -31,7 +32,7 @@ export const GET: APIRoute = async ({ cookies, locals, url }) => {
       FROM rsvp 
       ORDER BY submitted_at DESC
     `
-    ).all();
+    ).all<RSVPRow>();
 
     if (format === 'csv') {
       // Generate CSV

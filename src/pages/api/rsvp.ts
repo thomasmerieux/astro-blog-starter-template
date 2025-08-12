@@ -1,6 +1,9 @@
 import type { APIRoute } from 'astro';
 import { EmailService } from '../../utils/emailService';
 import type { RSVPData } from '../../utils/emailTemplates';
+import type { CloudflareD1Database } from '../../types/api';
+import { logger } from '../../utils/logger';
+
 export const prerender = false;
 
 // Comprehensive email validation
@@ -45,7 +48,7 @@ function sanitizeInput(input: string): string {
 }
 
 // Simple rate limiting check
-async function checkRateLimit(DB: any, email: string, ipAddress: string): Promise<boolean> {
+async function checkRateLimit(DB: CloudflareD1Database, email: string, ipAddress: string): Promise<boolean> {
   const oneHourAgo = Date.now() - 60 * 60 * 1000;
 
   // Check submissions from this email in the last hour
@@ -68,9 +71,19 @@ async function checkRateLimit(DB: any, email: string, ipAddress: string): Promis
 }
 
 export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
+  const startTime = performance.now();
+  
+  // Set logging context
+  logger.setContext({
+    ipAddress: clientAddress,
+    url: '/api/rsvp',
+    method: 'POST'
+  });
+
   try {
     // Check if we have database access in production mode
     if (!locals.runtime?.env?.DB) {
+      logger.error('Database connection not available');
       return new Response(
         JSON.stringify({
           success: false,
@@ -83,7 +96,7 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
       );
     }
 
-    const DB = locals.runtime.env.DB;
+    const DB = locals.runtime.env.DB as CloudflareD1Database;
     const formData = await request.formData();
 
     // Extract and sanitize form data
@@ -104,6 +117,7 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
 
     // Rate limiting check
     if (!(await checkRateLimit(DB, email, clientAddress))) {
+      logger.securityEvent('Rate limit exceeded', 'medium', { email });
       return new Response(
         JSON.stringify({
           success: false,
@@ -127,6 +141,7 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     if (plusOne && (!guestFirstName || !guestLastName)) errors.push('Guest name is required');
 
     if (errors.length > 0) {
+      logger.warn('RSVP validation failed', { email, errors });
       return new Response(
         JSON.stringify({
           success: false,
@@ -171,8 +186,18 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
       .run();
 
     if (!result.success) {
+      logger.error('Database insert failed', undefined, { email, attending });
       throw new Error('Failed to insert RSVP');
     }
+
+    // Log successful RSVP submission
+    logger.rsvpSubmission({
+      email,
+      attending,
+      language,
+      ipAddress: clientAddress,
+      success: true
+    });
 
     // Send emails using professional email service
     try {
@@ -212,20 +237,24 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
         const emailResults = await emailService.sendRSVPEmails(rsvpEmailData);
 
         // Log results but don't fail RSVP if emails fail
-        if (emailResults.guestEmail.success) {
-          console.warn(`✅ Guest confirmation sent to ${email}`);
-        } else {
-          console.error(`❌ Guest confirmation failed: ${emailResults.guestEmail.error}`);
-        }
+        logger.emailSent({
+          to: email,
+          type: 'rsvp_confirmation',
+          success: emailResults.guestEmail.success,
+          messageId: emailResults.guestEmail.messageId,
+          error: emailResults.guestEmail.error ? new Error(emailResults.guestEmail.error) : undefined
+        });
 
-        if (emailResults.adminEmail.success) {
-          console.warn('📧 Admin notification sent successfully');
-        } else {
-          console.error(`❌ Admin notification failed: ${emailResults.adminEmail.error}`);
-        }
+        logger.emailSent({
+          to: 'admin',
+          type: 'admin_notification',
+          success: emailResults.adminEmail.success,
+          messageId: emailResults.adminEmail.messageId,
+          error: emailResults.adminEmail.error ? new Error(emailResults.adminEmail.error) : undefined
+        });
       }
     } catch (emailError) {
-      console.error('❌ Email service error:', emailError);
+      logger.error('Email service error', emailError as Error, { email });
       // Don't fail the RSVP submission if email service fails
     }
 
@@ -236,7 +265,17 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
       },
     });
   } catch (error) {
-    console.error('RSVP submission error:', error);
+    logger.error('RSVP submission failed', error as Error);
+    
+    // Log failed RSVP attempt
+    logger.rsvpSubmission({
+      email: 'unknown',
+      attending: 'unknown',
+      language: 'unknown',
+      ipAddress: clientAddress,
+      success: false,
+      error: error as Error
+    });
 
     return new Response(
       JSON.stringify({
@@ -248,6 +287,15 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
         headers: { 'Content-Type': 'application/json' },
       }
     );
+  } finally {
+    // Clear logging context
+    logger.clearContext();
+    
+    // Log performance metrics
+    const duration = performance.now() - startTime;
+    logger.performanceLog('RSVP submission', duration, { 
+      ipAddress: clientAddress 
+    });
   }
 };
 

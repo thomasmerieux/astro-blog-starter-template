@@ -2,6 +2,7 @@
 import Menu from './Menu.astro';
 import { useTranslations } from '../i18n/utils';
 import type { BaseComponentProps } from '../types';
+import { Image } from 'astro:assets';
 import hotelImage from '../assets/IMG_2727 2.jpeg';
 import hotel2Image from '../assets/IMG_2910.JPG';
 import sheratonImage from '../assets/sheraton.png';
@@ -54,14 +55,22 @@ const validT = t || useTranslations(lang);
             onclick="window.open('https://athinasuiteshotel.com/', '_blank')"
           >
             <div class="flex h-full">
-              <img
-                src={hotelImage.src}
+              <Image
+                src={hotelImage}
                 alt={validT('accommodation.athina')}
+                width={600}
+                height={448}
+                loading="lazy"
+                sizes="(max-width: 768px) 50vw, 33vw"
                 class="w-1/2 h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
               />
-              <img
-                src={hotel2Image.src}
+              <Image
+                src={hotel2Image}
                 alt={validT('accommodation.athinaImageAlt')}
+                width={600}
+                height={448}
+                loading="lazy"
+                sizes="(max-width: 768px) 50vw, 33vw"
                 class="w-1/2 h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
               />
             </div>
@@ -88,9 +97,13 @@ const validT = t || useTranslations(lang);
             class="flex-1 relative overflow-hidden group cursor-pointer"
             onclick="window.open('https://www.marriott.com/en-us/hotels/buhsi-sheraton-bucharest-hotel/overview/', '_blank')"
           >
-            <img
-              src={sheratonImage.src + '?w=600&h=600&fit=crop'}
+            <Image
+              src={sheratonImage}
               alt={validT('accommodation.sheraton')}
+              width={600}
+              height={448}
+              loading="lazy"
+              sizes="(max-width: 768px) 100vw, 16vw"
               class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
             />
             <div
@@ -120,14 +133,20 @@ const validT = t || useTranslations(lang);
             onclick="window.open('https://athinasuiteshotel.com/', '_blank')"
           >
             <div class="flex h-full">
-              <img
-                src={hotelImage.src}
+              <Image
+                src={hotelImage}
                 alt={validT('accommodation.athina')}
+                width={400}
+                height={256}
+                loading="lazy"
                 class="w-1/2 h-full object-cover transition-opacity duration-300 group-active:opacity-0"
               />
-              <img
-                src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop"
+              <Image
+                src={hotel2Image}
                 alt={validT('accommodation.athinaImageAlt')}
+                width={400}
+                height={256}
+                loading="lazy"
                 class="w-1/2 h-full object-cover transition-opacity duration-300 group-active:opacity-0"
               />
             </div>
@@ -155,9 +174,12 @@ const validT = t || useTranslations(lang);
             class="relative overflow-hidden group cursor-pointer h-64"
             onclick="window.open('https://www.marriott.com/en-us/hotels/buhsi-sheraton-bucharest-hotel/overview/', '_blank')"
           >
-            <img
-              src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=600&h=600&fit=crop"
+            <Image
+              src={sheratonImage}
               alt={validT('accommodation.sheraton')}
+              width={600}
+              height={256}
+              loading="lazy"
               class="w-full h-full object-cover transition-opacity duration-300 group-active:opacity-0"
             />
             <div

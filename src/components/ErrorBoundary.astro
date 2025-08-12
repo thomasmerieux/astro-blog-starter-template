@@ -1,0 +1,42 @@
+---
+import { useTranslations } from '../i18n/utils';
+import type { BaseComponentProps } from '../types';
+
+export interface Props extends BaseComponentProps {
+  t?: any;
+  fallback?: string;
+}
+
+const { lang = 'en', t, fallback } = Astro.props;
+const validT = t || useTranslations(lang);
+---
+
+<div class="error-boundary p-6 bg-red-50 border border-red-200 rounded-lg">
+  <div class="flex items-center mb-4">
+    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+      <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+      </svg>
+    </div>
+    <h3 class="text-red-800 font-medium">
+      {fallback || validT('error.unexpected')}
+    </h3>
+  </div>
+  
+  <p class="text-red-700 text-sm mb-4">
+    {validT('error.persistentError')}
+  </p>
+  
+  <button 
+    onclick="window.location.reload()"
+    class="btn-primary text-sm px-4 py-2"
+  >
+    {validT('error.tryAgain')}
+  </button>
+</div>
+
+<style>
+  .error-boundary {
+    margin: 1rem 0;
+  }
+</style>
