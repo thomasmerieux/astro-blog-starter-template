@@ -46,6 +46,12 @@ const validT = t || useTranslations(lang);
     <!-- Page Content -->
     <div class="flex-1 flex justify-center">
       <div class="w-full max-w-6xl">
+        <!-- Introduction Text -->
+        <div class="mb-12 w-full">
+          <p class="text-gray-600 font-normal leading-relaxed text-left">
+            {validT('accommodation.introduction')}
+          </p>
+        </div>
         <!-- Desktop Layout -->
         <div class="hidden md:flex gap-4 h-[28rem]">
           <!-- Large Hotel Card (2/3 width) -->
@@ -104,7 +110,7 @@ const validT = t || useTranslations(lang);
               height={448}
               loading="lazy"
               sizes="(max-width: 768px) 100vw, 16vw"
-              class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+              class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0 scale-105"
             />
             <div
               class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent group-hover:opacity-0 transition-opacity duration-300"
@@ -180,7 +186,7 @@ const validT = t || useTranslations(lang);
               width={600}
               height={256}
               loading="lazy"
-              class="w-full h-full object-cover transition-opacity duration-300 group-active:opacity-0"
+              class="w-full h-full object-cover transition-opacity duration-300 group-active:opacity-0 scale-105"
             />
             <div
               class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent group-active:opacity-0 transition-opacity duration-300"

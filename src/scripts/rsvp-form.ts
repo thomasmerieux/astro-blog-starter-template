@@ -45,6 +45,7 @@ export class RSVPFormHandler {
     this.elements = elements;
     this.setupPlusOneToggle();
     this.setupFormSubmission();
+    this.setupRealTimeValidation();
     this.isInitialized = true;
   }
 
@@ -240,6 +241,90 @@ export class RSVPFormHandler {
     }
   }
 
+
+  /**
+   * Update guest field validation based on plus-one state
+   */
+  private updateGuestFieldValidation(required: boolean): void {
+    if (!this.elements) return;
+
+    const { guestFirstName, guestLastName } = this.elements;
+    
+    if (guestFirstName && guestLastName) {
+      if (required) {
+        guestFirstName.setAttribute('required', 'true');
+        guestLastName.setAttribute('required', 'true');
+      } else {
+        guestFirstName.removeAttribute('required');
+        guestLastName.removeAttribute('required');
+      }
+    }
+  }
+
+  /**
+   * Setup real-time form validation to enable/disable submit button
+   */
+  private setupRealTimeValidation(): void {
+    if (!this.elements) return;
+
+    const firstName = document.getElementById('firstName') as HTMLInputElement;
+    const lastName = document.getElementById('lastName') as HTMLInputElement;
+    const email = document.getElementById('email') as HTMLInputElement;
+    const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
+
+    const validateForm = () => {
+      const isFirstNameValid = firstName && firstName.value.trim() !== '';
+      const isLastNameValid = lastName && lastName.value.trim() !== '';
+      const isEmailValid = email && email.value.trim() !== '' && this.validateEmail(email.value.trim());
+      const isAttendanceSelected = Array.from(attendanceRadios).some((radio: any) => radio.checked);
+
+      // Check if plus-one fields are required and valid
+      let isPlusOneValid = true;
+      if (this.elements?.plusOneCheckbox?.checked) {
+        const guestFirstNameValid = this.elements.guestFirstName && this.elements.guestFirstName.value.trim() !== '';
+        const guestLastNameValid = this.elements.guestLastName && this.elements.guestLastName.value.trim() !== '';
+        isPlusOneValid = guestFirstNameValid && guestLastNameValid;
+      }
+
+      const isFormValid = isFirstNameValid && isLastNameValid && isEmailValid && isAttendanceSelected && isPlusOneValid;
+
+      if (this.elements?.submitButton) {
+        this.elements.submitButton.disabled = !isFormValid;
+      }
+    };
+
+    // Add listeners to all form fields
+    if (firstName) firstName.addEventListener('input', validateForm);
+    if (lastName) lastName.addEventListener('input', validateForm);
+    if (email) {
+      email.addEventListener('input', validateForm);
+      email.addEventListener('blur', () => {
+        const emailValue = email.value.trim();
+        if (emailValue && !this.validateEmail(emailValue)) {
+          this.showFieldError('email', this.t('rsvp.errors.emailInvalid'));
+        } else {
+          this.clearFieldError('email');
+        }
+      });
+    }
+
+    attendanceRadios.forEach(radio => {
+      radio.addEventListener('change', validateForm);
+    });
+
+    if (this.elements.guestFirstName) {
+      this.elements.guestFirstName.addEventListener('input', validateForm);
+    }
+    if (this.elements.guestLastName) {
+      this.elements.guestLastName.addEventListener('input', validateForm);
+    }
+    if (this.elements.plusOneCheckbox) {
+      this.elements.plusOneCheckbox.addEventListener('change', validateForm);
+    }
+
+    // Initial validation
+    validateForm();
+  }
 
   /**
    * Setup form submission handling

@@ -271,73 +271,30 @@ const validT = t || useTranslations(lang);
       </div>
 
       <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          const firstName = document.getElementById('firstName');
-          const lastName = document.getElementById('lastName');
-          const email = document.getElementById('email');
-          const submitButton = document.getElementById('submit-button');
-          const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
+        import { initializeRSVPForm } from '../scripts/rsvp-form.ts';
 
-          function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-          }
+        // Translation function
+        const t = (key) => {
+          // This would normally use the translation system, but for now we'll use fallbacks
+          const translations = {
+            'rsvp.errors.firstNameRequired': 'First name is required',
+            'rsvp.errors.lastNameRequired': 'Last name is required',
+            'rsvp.errors.emailRequired': 'Email is required',
+            'rsvp.errors.emailInvalid': 'Please enter a valid email address',
+            'rsvp.errors.attendanceRequired': 'Please select your attendance',
+            'rsvp.errors.guestFirstNameRequired': 'Guest first name is required',
+            'rsvp.errors.guestLastNameRequired': 'Guest last name is required',
+            'rsvp.errors.networkError': 'Network error. Please try again.',
+            'rsvp.errors.networkErrorStatus': 'Failed to submit. Please try again.',
+            'rsvp.errors.submissionError': 'Submission failed. Please try again.',
+            'rsvp.errors.unexpected': 'An unexpected error occurred',
+            'rsvp.form.statusSubmitting': 'Submitting...'
+          };
+          return translations[key] || key;
+        };
 
-          function validateEmailField() {
-            const emailError = document.getElementById('email-error');
-            if (!email || !emailError) return true;
-
-            const emailValue = email.value.trim();
-            if (emailValue === '') {
-              emailError.textContent = '';
-              emailError.classList.add('hidden');
-              email.classList.remove('border-red-500');
-              return false;
-            }
-
-            if (!isValidEmail(emailValue)) {
-              emailError.textContent = 'Please enter a valid email address';
-              emailError.classList.remove('hidden');
-              email.classList.add('border-red-500');
-              return false;
-            }
-
-            emailError.textContent = '';
-            emailError.classList.add('hidden');
-            email.classList.remove('border-red-500');
-            return true;
-          }
-
-          function validateForm() {
-            const isFirstNameValid = firstName && firstName.value.trim() !== '';
-            const isLastNameValid = lastName && lastName.value.trim() !== '';
-            const isEmailValid = email && email.value.trim() !== '' && isValidEmail(email.value.trim());
-            const isAttendanceSelected = Array.from(attendanceRadios).some(radio => radio.checked);
-
-            const isFormValid = isFirstNameValid && isLastNameValid && isEmailValid && isAttendanceSelected;
-
-            if (submitButton) {
-              submitButton.disabled = !isFormValid;
-            }
-          }
-
-          // Add listeners to all required fields
-          if (firstName) firstName.addEventListener('input', validateForm);
-          if (lastName) lastName.addEventListener('input', validateForm);
-          if (email) {
-            email.addEventListener('input', function() {
-              validateForm();
-              validateEmailField();
-            });
-            email.addEventListener('blur', validateEmailField);
-          }
-          
-          attendanceRadios.forEach(radio => {
-            radio.addEventListener('change', validateForm);
-          });
-
-          // Initial validation
-          validateForm();
-        });
+        // Initialize the RSVP form handler
+        initializeRSVPForm(t);
       </script>
 
     </div>
