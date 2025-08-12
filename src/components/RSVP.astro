@@ -253,8 +253,9 @@ const validT = t || useTranslations(lang);
             <button
               type="submit"
               id="submit-button"
-              class="btn-primary"
+              class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               aria-describedby="submit-status"
+              disabled
             >
               <span id="submit-text">{validT('rsvp.form.submit')}</span>
               <span id="submit-loading" class="hidden">{validT('rsvp.form.submitting')}</span>
@@ -270,16 +271,75 @@ const validT = t || useTranslations(lang);
       </div>
 
       <script>
-        import { initializeRSVPForm } from '../scripts/rsvp-form.ts';
+        document.addEventListener('DOMContentLoaded', function() {
+          const firstName = document.getElementById('firstName');
+          const lastName = document.getElementById('lastName');
+          const email = document.getElementById('email');
+          const submitButton = document.getElementById('submit-button');
+          const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
 
-        // Initialize the RSVP form with the translation function
-        initializeRSVPForm(window.validT || ((key) => key));
+          function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+          }
+
+          function validateEmailField() {
+            const emailError = document.getElementById('email-error');
+            if (!email || !emailError) return true;
+
+            const emailValue = email.value.trim();
+            if (emailValue === '') {
+              emailError.textContent = '';
+              emailError.classList.add('hidden');
+              email.classList.remove('border-red-500');
+              return false;
+            }
+
+            if (!isValidEmail(emailValue)) {
+              emailError.textContent = 'Please enter a valid email address';
+              emailError.classList.remove('hidden');
+              email.classList.add('border-red-500');
+              return false;
+            }
+
+            emailError.textContent = '';
+            emailError.classList.add('hidden');
+            email.classList.remove('border-red-500');
+            return true;
+          }
+
+          function validateForm() {
+            const isFirstNameValid = firstName && firstName.value.trim() !== '';
+            const isLastNameValid = lastName && lastName.value.trim() !== '';
+            const isEmailValid = email && email.value.trim() !== '' && isValidEmail(email.value.trim());
+            const isAttendanceSelected = Array.from(attendanceRadios).some(radio => radio.checked);
+
+            const isFormValid = isFirstNameValid && isLastNameValid && isEmailValid && isAttendanceSelected;
+
+            if (submitButton) {
+              submitButton.disabled = !isFormValid;
+            }
+          }
+
+          // Add listeners to all required fields
+          if (firstName) firstName.addEventListener('input', validateForm);
+          if (lastName) lastName.addEventListener('input', validateForm);
+          if (email) {
+            email.addEventListener('input', function() {
+              validateForm();
+              validateEmailField();
+            });
+            email.addEventListener('blur', validateEmailField);
+          }
+          
+          attendanceRadios.forEach(radio => {
+            radio.addEventListener('change', validateForm);
+          });
+
+          // Initial validation
+          validateForm();
+        });
       </script>
 
-      <script define:vars={{ validT }}>
-        // Make translation function globally available for the imported script
-        window.validT = validT;
-      </script>
     </div>
   </main>
 </div>

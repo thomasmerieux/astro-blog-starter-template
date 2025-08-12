@@ -1,7 +1,8 @@
 /**
  * RSVP Form Handler
- * Manages form validation, submission, and plus-one functionality
+ * Manages form validation, submission, and plus-one functionality with real-time feedback
  */
+
 
 export interface TranslationFunction {
   (key: string): string;
@@ -79,6 +80,7 @@ export class RSVPFormHandler {
       guestLastName,
     };
   }
+
 
   /**
    * Validate email format
@@ -202,6 +204,9 @@ export class RSVPFormHandler {
         guestLastName.setAttribute('aria-required', 'true');
       }
 
+      // Update validator rules to make guest fields required
+      this.updateGuestFieldValidation(true);
+
       // Focus first guest field
       setTimeout(() => guestFirstName?.focus(), 100);
     } else {
@@ -222,6 +227,9 @@ export class RSVPFormHandler {
         this.clearFieldError('guestLastName');
       }
 
+      // Update validator rules to make guest fields optional
+      this.updateGuestFieldValidation(false);
+
       // Clear vegetarian checkbox for +1
       const plusOneVegetarian = document.querySelector(
         'input[name="plusOneVegetarian"]'
@@ -231,6 +239,7 @@ export class RSVPFormHandler {
       }
     }
   }
+
 
   /**
    * Setup form submission handling
@@ -257,7 +266,7 @@ export class RSVPFormHandler {
       existingError.remove();
     }
 
-    // Validate form
+    // Validate form using legacy validation
     const formData = new FormData(this.elements.form);
     if (!this.validateForm(formData)) {
       // Focus first error field
@@ -280,6 +289,7 @@ export class RSVPFormHandler {
       this.setLoadingState(false);
     }
   }
+
 
   /**
    * Validate form data

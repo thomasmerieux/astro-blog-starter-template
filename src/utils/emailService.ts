@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import type { RSVPData } from './emailTemplates';
 import { generateGuestConfirmationEmail, generateAdminNotificationEmail } from './emailTemplates';
+import { CalendarGenerator } from './calendar';
 
 export interface EmailConfig {
   from: string;
@@ -32,11 +33,25 @@ class EmailService {
       try {
         const { subject, html } = generateGuestConfirmationEmail(rsvpData);
 
+        // Generate calendar attachment if attending
+        const attachments: any[] = [];
+        if (rsvpData.attending === 'yes') {
+          const weddingEvent = CalendarGenerator.generateWeddingEvent(rsvpData.language as 'en' | 'fr' | 'ro');
+          const calendarFile = CalendarGenerator.createDownloadableICS(weddingEvent);
+          
+          attachments.push({
+            filename: calendarFile.filename,
+            content: Buffer.from(calendarFile.content, 'utf8'),
+            type: calendarFile.mimeType,
+          });
+        }
+
         const result = await this.resend.emails.send({
           from: this.config.from,
           to: rsvpData.email,
           subject,
           html,
+          attachments,
           tags: [
             { name: 'type', value: 'guest-confirmation' },
             { name: 'attending', value: rsvpData.attending },
