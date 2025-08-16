@@ -241,7 +241,7 @@ export const ui = {
     'accommodation.athinaImageAlt': "Intérieur de l'Athina Suites Hotel",
     'accommodation.sheraton': 'Sheraton',
     'accommodation.sheratonDescription':
-      'Hôtel 5 étoiles central à proximité l\'thina Suites Hotel.',
+      'Hôtel 5 étoiles central à proximité de l\'Athina Suites Hotel.',
     'rsvp.form.statusSubmitting': 'Envoi de votre confirmation...',
     'rsvp.errors.unexpected': "Une erreur inattendue s'est produite",
     'rsvp.errors.submissionError': "Erreur lors de l'envoi de la confirmation",
