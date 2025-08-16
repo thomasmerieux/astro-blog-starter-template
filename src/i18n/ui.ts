@@ -171,7 +171,7 @@ export const ui = {
     'venue.rain':
       "La terrasse peut être couverte si nécessaire.",
     'accommodation.title': 'Hébergement',
-    'accommodation.introduction': 'Nous avons réservé des chambres dans deux hôtels autour de la date du mariage (20 septembre 2025) pour les invités qui n\'habitent pas à Bucarest. Notre hôtel principal est l\'Athina Suites Hotel, où la plupart des invités séjourneront. Nous avons également réservé quelques chambres au Sheraton comme option supplémentaire. Si vous prévoyez d\'arriver plus tôt ou de partir plus tard — faites-le-nous simplement savoir. La nombre de chambre étant limité, le plus tôt le mieux !',
+    'accommodation.introduction': 'Nous avons réservé des chambres dans deux hôtels autour de la date du mariage (20 septembre 2025) pour les invités qui n\'habitent pas à Bucarest. Notre hôtel principal est l\'Athina Suites Hotel, où la plupart des invités séjourneront. Nous avons également réservé quelques chambres au Sheraton comme option supplémentaire. Si vous prévoyez d\'arriver plus tôt ou de partir plus tard — faites-le-nous simplement savoir. Le nombre de chambres étant limité, le plus tôt sera le mieux !',
     'qa.title': 'Q & A',
     'qa.questions.parking.question': 'Y a-t-il un parking de disponible ?',
     'qa.questions.parking.answer':
@@ -183,7 +183,7 @@ export const ui = {
     'qa.questions.dresscode.answer':
       "Le code vestimentaire est cocktail/semi-formel. Aucune règle concernant les couleurs (sauf le blanc).",
     'qa.questions.venue.question': 'Comment se rendre à Loft Diplomat ?',
-    'qa.questions.venue.answer': 'Le Loft Diplomat se trouve dans un quartier central de Bucarest. Il est facilement accessible en transports en commun, voiture, taxi et via Uber ou Uber.',
+    'qa.questions.venue.answer': 'Le Loft Diplomat se trouve dans un quartier central de Bucarest. Il est facilement accessible en transports en commun, voiture, taxi et via Uber ou Bolt.',
     'rsvp.title': 'RSVP',
     'rsvp.form.firstName': 'Prénom',
     'rsvp.form.lastName': 'Nom',
