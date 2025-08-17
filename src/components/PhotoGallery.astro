@@ -1,0 +1,425 @@
+---
+import Menu from './Menu.astro';
+import { useTranslations } from '../i18n/utils';
+import type { BaseComponentProps } from '../types';
+
+export interface Props extends BaseComponentProps {
+  t?: any; // Make t optional
+}
+
+const { lang = 'en', t } = Astro.props;
+
+// Ensure we have a valid translation function
+const validT = t || useTranslations(lang);
+
+export const prerender = false;
+---
+
+<div class="min-h-screen flex flex-col">
+  <!-- Skip link for screen readers -->
+  <a
+    href="#main-content"
+    class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:border focus:border-gray-300"
+  >
+    {validT('common.skipToContent')}
+  </a>
+
+  <!-- Menu - fixed at top -->
+  <header class="flex-shrink-0">
+    <Menu lang={lang} t={validT} />
+  </header>
+
+  <!-- Main content area -->
+  <main id="main-content" class="flex-1 flex flex-col p-6 md:p-8">
+    <!-- Page Title -->
+    <div class="text-center mb-8 md:mb-12 lg:mb-20 flex-shrink-0">
+      <h1
+        class="text-gray-800 uppercase tracking-wider font-normal text-2xl sm:text-4xl"
+        style="letter-spacing: 4px;"
+      >
+        Photo Gallery
+      </h1>
+    </div>
+
+    <!-- Page Content -->
+    <div class="flex-1 flex justify-center">
+      <div class="w-full max-w-7xl">
+        <div id="photo-gallery" class="w-full">
+  <!-- Loading State -->
+  <div id="loading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+    <p class="mt-2 text-gray-600">Loading photos...</p>
+  </div>
+
+  <!-- Error State -->
+  <div id="error" class="text-center py-12 hidden">
+    <p class="text-red-600">Failed to load photos. Please try again later.</p>
+    <button id="retry-btn" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+      Retry
+    </button>
+  </div>
+
+  <!-- Photo Grid -->
+  <div id="photo-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 hidden">
+    <!-- Photos will be dynamically inserted here -->
+  </div>
+
+  <!-- Empty State -->
+  <div id="empty-state" class="text-center py-12 hidden">
+    <p class="text-gray-600">No photos have been uploaded yet.</p>
+  </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Lightbox Modal -->
+<div id="lightbox" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden">
+  <div class="relative w-full h-full flex items-center justify-center">
+    <!-- Close Button -->
+    <button
+      id="lightbox-close"
+      class="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 z-10 p-2"
+      aria-label="Close lightbox"
+    >
+      ×
+    </button>
+    
+    <!-- Previous Button -->
+    <button
+      id="lightbox-prev"
+      class="absolute left-4 text-white text-4xl hover:text-gray-300 z-10 p-2 hidden"
+      aria-label="Previous photo"
+    >
+      ‹
+    </button>
+    
+    <!-- Next Button -->
+    <button
+      id="lightbox-next"
+      class="absolute right-4 text-white text-4xl hover:text-gray-300 z-10 p-2 hidden"
+      aria-label="Next photo"
+    >
+      ›
+    </button>
+    
+    <!-- Image Container -->
+    <div class="relative max-w-full max-h-full p-4">
+      <img
+        id="lightbox-image"
+        class="max-w-full max-h-full object-contain"
+        alt="Photo"
+      />
+      
+      <!-- Photo Info Bar -->
+      <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center space-x-4">
+        <!-- Photo Counter -->
+        <div id="photo-counter" class="text-white bg-black bg-opacity-50 px-3 py-1 rounded">
+          <span id="current-photo">1</span> / <span id="total-photos">1</span>
+        </div>
+        
+        <!-- Download Original Button -->
+        <button
+          id="download-original"
+          class="text-white bg-black bg-opacity-50 hover:bg-opacity-70 px-3 py-1 rounded transition-opacity"
+          title="Download original photo"
+        >
+          <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+          Download
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+class PhotoGallery {
+  constructor() {
+    this.photos = [];
+    this.currentLightboxIndex = 0;
+    this.init();
+  }
+
+  async init() {
+    this.setupEventListeners();
+    await this.loadPhotos();
+  }
+
+  setupEventListeners() {
+    // Retry button
+    const retryBtn = document.getElementById('retry-btn');
+    if (retryBtn) {
+      retryBtn.addEventListener('click', () => this.loadPhotos());
+    }
+
+    // Lightbox controls
+    const lightboxClose = document.getElementById('lightbox-close');
+    const lightboxPrev = document.getElementById('lightbox-prev');
+    const lightboxNext = document.getElementById('lightbox-next');
+    const downloadOriginal = document.getElementById('download-original');
+    const lightbox = document.getElementById('lightbox');
+
+    if (lightboxClose) {
+      lightboxClose.addEventListener('click', () => this.closeLightbox());
+    }
+
+    if (lightboxPrev) {
+      lightboxPrev.addEventListener('click', () => this.previousPhoto());
+    }
+
+    if (lightboxNext) {
+      lightboxNext.addEventListener('click', () => this.nextPhoto());
+    }
+
+    if (downloadOriginal) {
+      downloadOriginal.addEventListener('click', () => this.downloadOriginal());
+    }
+
+    if (lightbox) {
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+          this.closeLightbox();
+        }
+      });
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (lightbox && !lightbox.classList.contains('hidden')) {
+        if (e.key === 'Escape') {
+          this.closeLightbox();
+        } else if (e.key === 'ArrowLeft') {
+          this.previousPhoto();
+        } else if (e.key === 'ArrowRight') {
+          this.nextPhoto();
+        }
+      }
+    });
+  }
+
+  async loadPhotos() {
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const photoGrid = document.getElementById('photo-grid');
+    const emptyState = document.getElementById('empty-state');
+
+    // Show loading state
+    loading.classList.remove('hidden');
+    error.classList.add('hidden');
+    photoGrid.classList.add('hidden');
+    emptyState.classList.add('hidden');
+
+    try {
+      const response = await fetch('/api/photos?per_page=100');
+      if (!response.ok) {
+        throw new Error('Failed to fetch photos');
+      }
+
+      const data = await response.json();
+      this.photos = data.result?.images || [];
+
+      loading.classList.add('hidden');
+
+      if (this.photos.length === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        this.renderPhotos();
+        photoGrid.classList.remove('hidden');
+      }
+    } catch (err) {
+      loading.classList.add('hidden');
+      error.classList.remove('hidden');
+      console.error('Error loading photos:', err);
+    }
+  }
+
+  renderPhotos() {
+    const photoGrid = document.getElementById('photo-grid');
+    if (!photoGrid) return;
+
+    photoGrid.innerHTML = this.photos.map((photo, index) => {
+      // Find the best thumbnail variant (prefer smaller sizes for grid display)
+      const thumbnailUrl = photo.variants.find(v => v.includes('thumbnail')) || 
+                          photo.variants.find(v => v.includes('public')) || 
+                          photo.variants[0];
+
+      return `
+        <div class="photo-item group cursor-pointer" data-index="${index}">
+          <div class="relative overflow-hidden rounded-lg aspect-square bg-gray-200">
+            <div class="lazy-image-container w-full h-full" data-src="${thumbnailUrl}">
+              <div class="lazy-placeholder w-full h-full flex items-center justify-center">
+                <div class="animate-pulse bg-gray-300 w-full h-full rounded-lg"></div>
+              </div>
+            </div>
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300 rounded-lg"></div>
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Add click listeners to photo items
+    photoGrid.querySelectorAll('.photo-item').forEach((item, index) => {
+      item.addEventListener('click', () => this.openLightbox(index));
+    });
+
+    // Initialize lazy loading
+    this.initLazyLoading();
+  }
+
+  openLightbox(index) {
+    this.currentLightboxIndex = index;
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightbox-image');
+    const lightboxPrev = document.getElementById('lightbox-prev');
+    const lightboxNext = document.getElementById('lightbox-next');
+    const currentPhoto = document.getElementById('current-photo');
+    const totalPhotos = document.getElementById('total-photos');
+
+    if (lightbox && lightboxImage && this.photos[index]) {
+      const photo = this.photos[index];
+      // Use the highest quality variant available for lightbox
+      const fullSizeVariant = photo.variants.find(v => v.includes('public')) || photo.variants[0];
+      
+      lightboxImage.src = fullSizeVariant;
+      lightbox.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+
+      // Update navigation buttons visibility
+      if (this.photos.length > 1) {
+        lightboxPrev.classList.remove('hidden');
+        lightboxNext.classList.remove('hidden');
+      } else {
+        lightboxPrev.classList.add('hidden');
+        lightboxNext.classList.add('hidden');
+      }
+
+      // Update counter
+      currentPhoto.textContent = index + 1;
+      totalPhotos.textContent = this.photos.length;
+    }
+  }
+
+  closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) {
+      lightbox.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  }
+
+  previousPhoto() {
+    if (this.photos.length > 0) {
+      this.currentLightboxIndex = (this.currentLightboxIndex - 1 + this.photos.length) % this.photos.length;
+      this.openLightbox(this.currentLightboxIndex);
+    }
+  }
+
+  nextPhoto() {
+    if (this.photos.length > 0) {
+      this.currentLightboxIndex = (this.currentLightboxIndex + 1) % this.photos.length;
+      this.openLightbox(this.currentLightboxIndex);
+    }
+  }
+
+  initLazyLoading() {
+    // Create Intersection Observer for lazy loading
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const container = entry.target;
+          const imageSrc = container.dataset.src;
+          
+          this.loadImage(container, imageSrc);
+          observer.unobserve(container);
+        }
+      });
+    }, {
+      // Start loading when image is 200px away from viewport
+      rootMargin: '200px 0px',
+      threshold: 0.01
+    });
+
+    // Observe all lazy image containers
+    document.querySelectorAll('.lazy-image-container').forEach(container => {
+      imageObserver.observe(container);
+    });
+  }
+
+  loadImage(container, src) {
+    const img = new Image();
+    
+    img.onload = () => {
+      // Replace placeholder with actual image
+      container.innerHTML = `
+        <img
+          src="${src}"
+          alt="Wedding photo"
+          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 opacity-0"
+        />
+      `;
+      
+      const imgElement = container.querySelector('img');
+      
+      // Fade in the image
+      requestAnimationFrame(() => {
+        imgElement.style.opacity = '1';
+        imgElement.style.transition = 'opacity 0.3s ease-in-out';
+      });
+
+      // Add error handling
+      imgElement.addEventListener('error', () => {
+        container.innerHTML = `
+          <div class="w-full h-full flex items-center justify-center text-gray-400">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+        `;
+      });
+    };
+
+    img.onerror = () => {
+      // Show error placeholder
+      container.innerHTML = `
+        <div class="w-full h-full flex items-center justify-center text-gray-400">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+      `;
+    };
+
+    // Start loading the image
+    img.src = src;
+  }
+
+  downloadOriginal() {
+    if (this.photos[this.currentLightboxIndex]) {
+      const photo = this.photos[this.currentLightboxIndex];
+      const downloadUrl = `/api/photos/download?id=${photo.id}`;
+      
+      // Create a temporary link and click it to trigger download
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `wedding-photo-${photo.id}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+}
+
+// Initialize the photo gallery when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  new PhotoGallery();
+});
+</script>

@@ -1,0 +1,95 @@
+import type { APIRoute } from 'astro';
+
+const CLOUDFLARE_ACCOUNT_ID = import.meta.env.CLOUDFLARE_ACCOUNT_ID;
+const CLOUDFLARE_API_TOKEN = import.meta.env.CLOUDFLARE_API_TOKEN;
+const CLOUDFLARE_R2_BUCKET_NAME = import.meta.env.CLOUDFLARE_R2_BUCKET_NAME;
+
+export const GET: APIRoute = async ({ request }) => {
+  try {
+    const url = new URL(request.url);
+    const imageId = url.searchParams.get('id');
+
+    if (!imageId) {
+      return new Response(
+        JSON.stringify({ error: 'Image ID is required' }),
+        {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    }
+
+    // Get image metadata to find R2 filename
+    const imageResponse = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/images/v1/${imageId}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`,
+        },
+      }
+    );
+
+    if (!imageResponse.ok) {
+      throw new Error(`Failed to get image metadata: ${imageResponse.statusText}`);
+    }
+
+    const imageData = await imageResponse.json();
+    const metadata = imageData.result?.meta;
+    const r2FileName = metadata?.originalFileName || metadata?.r2Key;
+
+    if (!r2FileName) {
+      return new Response(
+        JSON.stringify({ error: 'Original file not found in R2' }),
+        {
+          status: 404,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    }
+
+    // Get the original file from R2
+    const r2Response = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/r2/buckets/${CLOUDFLARE_R2_BUCKET_NAME}/objects/${r2FileName}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`,
+        },
+      }
+    );
+
+    if (!r2Response.ok) {
+      throw new Error(`Failed to get file from R2: ${r2Response.statusText}`);
+    }
+
+    // Get the content type from R2 response or guess from filename
+    const contentType = r2Response.headers.get('content-type') || 
+                       (r2FileName.endsWith('.jpg') || r2FileName.endsWith('.jpeg') ? 'image/jpeg' : 
+                        r2FileName.endsWith('.png') ? 'image/png' : 
+                        r2FileName.endsWith('.webp') ? 'image/webp' : 'application/octet-stream');
+
+    // Stream the file back to the client
+    return new Response(r2Response.body, {
+      status: 200,
+      headers: {
+        'Content-Type': contentType,
+        'Content-Disposition': `attachment; filename="${r2FileName}"`,
+        'Cache-Control': 'public, max-age=31536000',
+      },
+    });
+  } catch (error) {
+    console.error('Error downloading photo:', error);
+    return new Response(
+      JSON.stringify({ error: 'Failed to download photo' }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  }
+};

@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PhotoGallery from '../components/PhotoGallery.astro';
+import { useTranslations } from '../i18n/utils';
+
+const lang = 'en';
+const t = useTranslations(lang);
+const pageTitle = `Photo Gallery - DANA & THOMAS`;
+
+export const prerender = false;
+---
+
+<BaseLayout title={pageTitle} lang={lang}>
+  <PhotoGallery lang={lang} t={t} />
+</BaseLayout>
