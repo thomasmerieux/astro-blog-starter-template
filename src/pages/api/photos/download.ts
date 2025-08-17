@@ -6,6 +6,13 @@ const CLOUDFLARE_R2_BUCKET_NAME = import.meta.env.CLOUDFLARE_R2_BUCKET_NAME;
 
 export const GET: APIRoute = async ({ request }) => {
   try {
+    console.log('Download API called');
+    console.log('Environment check:', {
+      accountId: !!CLOUDFLARE_ACCOUNT_ID,
+      token: !!CLOUDFLARE_API_TOKEN,
+      bucket: !!CLOUDFLARE_R2_BUCKET_NAME
+    });
+
     const url = new URL(request.url);
     const imageId = url.searchParams.get('id');
 
@@ -20,6 +27,8 @@ export const GET: APIRoute = async ({ request }) => {
         }
       );
     }
+
+    console.log('Downloading image ID:', imageId);
 
     // Get image metadata to find R2 filename
     const imageResponse = await fetch(

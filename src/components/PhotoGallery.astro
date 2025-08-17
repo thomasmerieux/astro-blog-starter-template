@@ -402,7 +402,7 @@ class PhotoGallery {
     img.src = src;
   }
 
-  downloadOriginal() {
+  async downloadOriginal() {
     if (this.photos[this.currentLightboxIndex]) {
       const photo = this.photos[this.currentLightboxIndex];
       console.log('Downloading photo:', photo);
@@ -410,14 +410,33 @@ class PhotoGallery {
       const downloadUrl = `/api/photos/download?id=${photo.id}`;
       console.log('Download URL:', downloadUrl);
       
-      // Create a temporary link and click it to trigger download
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = `wedding-photo-${photo.id}.jpg`;
-      link.target = '_blank'; // Open in new tab as fallback
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      try {
+        // First test if the API endpoint is working
+        const response = await fetch(downloadUrl);
+        console.log('API Response status:', response.status);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Download API error:', errorText);
+          alert(`Download failed: ${response.status} - ${errorText}`);
+          return;
+        }
+        
+        // If the API works, download the file
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `wedding-photo-${photo.id}.jpg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+      } catch (error) {
+        console.error('Download failed:', error);
+        alert('Download failed. Please check the console for details.');
+      }
     } else {
       console.error('No photo found at current index:', this.currentLightboxIndex);
     }
