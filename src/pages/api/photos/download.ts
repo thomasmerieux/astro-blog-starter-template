@@ -45,12 +45,36 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     const imageData = await imageResponse.json();
+    console.log('Image metadata:', imageData.result?.meta);
+    
     const metadata = imageData.result?.meta;
     const r2FileName = metadata?.originalFileName || metadata?.r2Key;
 
+    console.log('R2 filename found:', r2FileName);
+
     if (!r2FileName) {
+      console.log('No R2 filename found in metadata, falling back to Cloudflare Images');
+      // Fallback: download the largest variant from Cloudflare Images
+      const publicVariant = imageData.result?.variants?.find(v => v.includes('public'));
+      if (publicVariant) {
+        const imageResponse = await fetch(publicVariant);
+        if (imageResponse.ok) {
+          return new Response(imageResponse.body, {
+            status: 200,
+            headers: {
+              'Content-Type': 'image/jpeg',
+              'Content-Disposition': `attachment; filename="wedding-photo-${imageId}.jpg"`,
+              'Cache-Control': 'public, max-age=31536000',
+            },
+          });
+        }
+      }
+      
       return new Response(
-        JSON.stringify({ error: 'Original file not found in R2' }),
+        JSON.stringify({ 
+          error: 'Original file not found in R2 and no fallback available',
+          debug: { metadata, imageData: imageData.result }
+        }),
         {
           status: 404,
           headers: {
@@ -61,17 +85,21 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     // Get the original file from R2
-    const r2Response = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/r2/buckets/${CLOUDFLARE_R2_BUCKET_NAME}/objects/${r2FileName}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`,
-        },
-      }
-    );
+    const r2Url = `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/r2/buckets/${CLOUDFLARE_R2_BUCKET_NAME}/objects/${r2FileName}`;
+    console.log('Fetching from R2 URL:', r2Url);
+    
+    const r2Response = await fetch(r2Url, {
+      headers: {
+        'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`,
+      },
+    });
+
+    console.log('R2 response status:', r2Response.status);
 
     if (!r2Response.ok) {
-      throw new Error(`Failed to get file from R2: ${r2Response.statusText}`);
+      const r2Error = await r2Response.text();
+      console.log('R2 error response:', r2Error);
+      throw new Error(`Failed to get file from R2: ${r2Response.statusText} - File: ${r2FileName}`);
     }
 
     // Get the content type from R2 response or guess from filename
