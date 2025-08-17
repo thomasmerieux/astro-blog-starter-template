@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 
 const CLOUDFLARE_ACCOUNT_ID = import.meta.env.CLOUDFLARE_ACCOUNT_ID;
 const CLOUDFLARE_API_TOKEN = import.meta.env.CLOUDFLARE_API_TOKEN;
-const CLOUDFLARE_R2_BUCKET_NAME = import.meta.env.CLOUDFLARE_R2_BUCKET_NAME;
+const CLOUDFLARE_R2_BUCKET_NAME = import.meta.env.CLOUDFLARE_R2_BUCKET_NAME || 'wedding';
 
 export const GET: APIRoute = async ({ request }) => {
   try {
