@@ -298,7 +298,7 @@ export const ui = {
     'venue.rain':
       'Și dacă plouă? Avem totul sub control. Terasa poate fi acoperită în caz că vremea nu ține cu noi.',
     'accommodation.title': 'Cazare',
-    'accommodation.introduction': 'Pentru oaspeții care vin din afara Bucureștiului, am rezervat camere la două hoteluri în jurul datei nunții (20 septembrie 2025). Hotelul nostru principal este Athina Suites Hotel, unde vor sta majoritatea oaspeților din afara orașului. Am rezervat și câteva camere la Sheraton ca opțiune suplimentară. Rezervarea poate acoperi o ședere mai lungă dacă plănuiți să ajungeți mai devreme sau să plecați mai târziu. Disponibilitatea este limitată, așa că cu cât mai devreme, cu atât mai bine!',
+    'accommodation.introduction': 'Pentru oaspeții care vin din afara Bucureștiului, am rezervat camere la două hoteluri în jurul datei nunții (20 septembrie 2025). Hotelul nostru principal este Athina Suites Hotel, unde vor sta majoritatea oaspeților din afara orașului. Am rezervat și câteva camere la Sheraton ca opțiune suplimentară. Rezervarea poate acoperi o ședere mai lungă dacă plănuiți să ajungeți mai devreme sau să plecați mai târziu.',
     'qa.title': 'Q & A',
     'qa.questions.parking.question': 'Există parcare la locație?',
     'qa.questions.parking.answer':
