@@ -28,11 +28,11 @@ const { lang = 'en', t } = Astro.props;
 
     <!-- Desktop Navigation Links (absolutely centered) -->
     <div class="hidden xl:block absolute left-1/2 transform -translate-x-1/2" role="menubar">
-      <ul class="flex space-x-6">
+      <ul class="flex space-x-8">
         <li>
           <a
             href={lang === 'en' ? '/' : `/${lang}/`}
-            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.home')}
@@ -41,7 +41,7 @@ const { lang = 'en', t } = Astro.props;
         <li>
           <a
             href={lang === 'en' ? '/schedule' : `/${lang}/schedule`}
-            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.schedule')}
@@ -50,7 +50,7 @@ const { lang = 'en', t } = Astro.props;
         <li>
           <a
             href={lang === 'en' ? '/venue' : `/${lang}/venue`}
-            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.venue')}
@@ -59,7 +59,7 @@ const { lang = 'en', t } = Astro.props;
         <li>
           <a
             href={lang === 'en' ? '/accommodation' : `/${lang}/accommodation`}
-            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.accommodation')}
@@ -68,7 +68,7 @@ const { lang = 'en', t } = Astro.props;
         <li>
           <a
             href={lang === 'en' ? '/qa' : `/${lang}/qa`}
-            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.qa')}
@@ -77,10 +77,19 @@ const { lang = 'en', t } = Astro.props;
         <li>
           <a
             href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`}
-            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.rsvp')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/contact' : `/${lang}/contact`}
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
+            role="menuitem"
+          >
+            {t('nav.contact')}
           </a>
         </li>
       </ul>
@@ -88,11 +97,11 @@ const { lang = 'en', t } = Astro.props;
 
     <!-- iPad Navigation Links (left-aligned) -->
     <div class="hidden md:block xl:hidden" role="menubar">
-      <ul class="flex space-x-4">
+      <ul class="flex space-x-6">
         <li>
           <a
             href={lang === 'en' ? '/' : `/${lang}/`}
-            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.home')}
@@ -101,7 +110,7 @@ const { lang = 'en', t } = Astro.props;
         <li>
           <a
             href={lang === 'en' ? '/schedule' : `/${lang}/schedule`}
-            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.schedule')}
@@ -110,7 +119,7 @@ const { lang = 'en', t } = Astro.props;
         <li>
           <a
             href={lang === 'en' ? '/venue' : `/${lang}/venue`}
-            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.venue')}
@@ -119,7 +128,7 @@ const { lang = 'en', t } = Astro.props;
         <li>
           <a
             href={lang === 'en' ? '/accommodation' : `/${lang}/accommodation`}
-            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.accommodation')}
@@ -128,7 +137,7 @@ const { lang = 'en', t } = Astro.props;
         <li>
           <a
             href={lang === 'en' ? '/qa' : `/${lang}/qa`}
-            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.qa')}
@@ -137,10 +146,19 @@ const { lang = 'en', t } = Astro.props;
         <li>
           <a
             href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`}
-            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide"
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
           >
             {t('nav.rsvp')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/contact' : `/${lang}/contact`}
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
+            role="menuitem"
+          >
+            {t('nav.contact')}
           </a>
         </li>
       </ul>
@@ -219,6 +237,9 @@ const { lang = 'en', t } = Astro.props;
     >
     <a href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`} class="mobile-link" role="menuitem"
       >{t('nav.rsvp')}</a
+    >
+    <a href={lang === 'en' ? '/contact' : `/${lang}/contact`} class="mobile-link" role="menuitem"
+      >{t('nav.contact')}</a
     >
   </nav>
 </div>
