@@ -460,7 +460,14 @@ class PhotoGallery {
   }
 
   openLightbox(index) {
+    console.log('Opening lightbox for index:', index);
     this.currentLightboxIndex = index;
+    
+    // Cancel any existing high-res timers first
+    if (this.currentHighResTimeout) {
+      clearTimeout(this.currentHighResTimeout);
+      this.currentHighResTimeout = null;
+    }
     const lightbox = document.getElementById('lightbox');
     const lightboxImage = document.getElementById('lightbox-image');
     const lightboxPrev = document.getElementById('lightbox-prev');
@@ -535,12 +542,15 @@ class PhotoGallery {
         };
         
         // Trigger 1: Load high-res after 2 seconds of viewing
-        const delayedLoad = setTimeout(loadHighRes, 2000);
+        this.currentHighResTimeout = setTimeout(loadHighRes, 2000);
         
         // Store handler for cleanup
         this.touchStartHandler = (e) => {
           if (e.touches.length >= 2) { // Multi-touch = likely zoom
-            clearTimeout(delayedLoad);
+            if (this.currentHighResTimeout) {
+              clearTimeout(this.currentHighResTimeout);
+              this.currentHighResTimeout = null;
+            }
             loadHighRes();
           }
         };
@@ -551,9 +561,14 @@ class PhotoGallery {
         // Clean up timeout and listeners if user closes lightbox
         const originalCloseLightbox = this.closeLightbox.bind(this);
         this.closeLightbox = () => {
-          clearTimeout(delayedLoad);
+          if (this.currentHighResTimeout) {
+            clearTimeout(this.currentHighResTimeout);
+            this.currentHighResTimeout = null;
+          }
           // Remove touch listeners to prevent interference
-          lightboxImage.removeEventListener('touchstart', this.touchStartHandler);
+          if (lightboxImage && this.touchStartHandler) {
+            lightboxImage.removeEventListener('touchstart', this.touchStartHandler);
+          }
           this.closeLightbox = originalCloseLightbox; // Restore original
           originalCloseLightbox();
         };
@@ -587,6 +602,7 @@ class PhotoGallery {
   previousPhoto() {
     if (this.photos.length > 0) {
       this.currentLightboxIndex = (this.currentLightboxIndex - 1 + this.photos.length) % this.photos.length;
+      console.log('Previous photo - moving to index:', this.currentLightboxIndex);
       this.openLightbox(this.currentLightboxIndex);
     }
   }
@@ -594,6 +610,7 @@ class PhotoGallery {
   nextPhoto() {
     if (this.photos.length > 0) {
       this.currentLightboxIndex = (this.currentLightboxIndex + 1) % this.photos.length;
+      console.log('Next photo - moving to index:', this.currentLightboxIndex);
       this.openLightbox(this.currentLightboxIndex);
     }
   }
