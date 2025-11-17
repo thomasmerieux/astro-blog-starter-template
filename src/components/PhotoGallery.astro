@@ -275,6 +275,12 @@ class PhotoGallery {
     this.photos = [];
     this.currentLightboxIndex = 0;
     this.currentGridSize = this.getStoredGridSize();
+    
+    // Touch gesture properties
+    this.touchStartX = 0;
+    this.touchStartY = 0;
+    this.touchDistance = 0;
+    
     this.init();
   }
 
@@ -327,6 +333,9 @@ class PhotoGallery {
           this.closeLightbox();
         }
       });
+      
+      // Mobile touch gestures for lightbox
+      this.setupMobileGestures(lightbox);
     }
 
     // Keyboard navigation
@@ -560,6 +569,88 @@ class PhotoGallery {
         this.loadImage(container, imageSrc);
       }
     }
+  }
+
+  setupMobileGestures(lightbox) {
+    // Touch start - record initial touch position
+    lightbox.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        // Single touch for swipe
+        this.touchStartX = e.touches[0].clientX;
+        this.touchStartY = e.touches[0].clientY;
+      } else if (e.touches.length === 2) {
+        // Two finger pinch - record distance
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        this.touchDistance = Math.sqrt(
+          Math.pow(touch2.clientX - touch1.clientX, 2) +
+          Math.pow(touch2.clientY - touch1.clientY, 2)
+        );
+      }
+    }, { passive: true });
+
+    // Touch move - prevent scrolling during swipe
+    lightbox.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1) {
+        // Prevent scrolling during horizontal swipe
+        const touchCurrentX = e.touches[0].clientX;
+        const touchCurrentY = e.touches[0].clientY;
+        const deltaX = Math.abs(touchCurrentX - this.touchStartX);
+        const deltaY = Math.abs(touchCurrentY - this.touchStartY);
+        
+        // If horizontal movement is greater than vertical, prevent scrolling
+        if (deltaX > deltaY && deltaX > 10) {
+          e.preventDefault();
+        }
+      }
+    });
+
+    // Touch end - detect swipe or pinch gestures
+    lightbox.addEventListener('touchend', (e) => {
+      if (e.changedTouches.length === 1 && this.touchStartX !== 0) {
+        // Single finger swipe
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        const deltaX = this.touchStartX - touchEndX;
+        const deltaY = Math.abs(this.touchStartY - touchEndY);
+        
+        // Minimum swipe distance and ensure it's more horizontal than vertical
+        if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > deltaY) {
+          if (deltaX > 0) {
+            // Swipe left = next photo
+            this.nextPhoto();
+          } else {
+            // Swipe right = previous photo
+            this.previousPhoto();
+          }
+        }
+        
+        // Reset touch tracking
+        this.touchStartX = 0;
+        this.touchStartY = 0;
+      } else if (e.touches.length === 0 && this.touchDistance > 0) {
+        // End of pinch gesture - could add pinch to zoom here
+        this.touchDistance = 0;
+      }
+    }, { passive: true });
+
+    // Pinch gesture detection (for future zoom functionality)
+    lightbox.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2 && this.touchDistance > 0) {
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const currentDistance = Math.sqrt(
+          Math.pow(touch2.clientX - touch1.clientX, 2) +
+          Math.pow(touch2.clientY - touch1.clientY, 2)
+        );
+        
+        // Detect pinch in (zoom out) - could close lightbox
+        if (currentDistance < this.touchDistance * 0.7) {
+          this.closeLightbox();
+          this.touchDistance = 0;
+        }
+      }
+    }, { passive: true });
   }
 
   getStoredGridSize() {
