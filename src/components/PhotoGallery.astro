@@ -537,18 +537,23 @@ class PhotoGallery {
         // Trigger 1: Load high-res after 2 seconds of viewing
         const delayedLoad = setTimeout(loadHighRes, 2000);
         
-        // Trigger 2: Load high-res on any touch interaction (pinch, zoom gestures)
-        lightboxImage.addEventListener('touchstart', (e) => {
+        // Store handler for cleanup
+        this.touchStartHandler = (e) => {
           if (e.touches.length >= 2) { // Multi-touch = likely zoom
             clearTimeout(delayedLoad);
             loadHighRes();
           }
-        });
+        };
         
-        // Clean up timeout if user closes lightbox
+        // Trigger 2: Load high-res on any touch interaction (pinch, zoom gestures)
+        lightboxImage.addEventListener('touchstart', this.touchStartHandler);
+        
+        // Clean up timeout and listeners if user closes lightbox
         const originalCloseLightbox = this.closeLightbox.bind(this);
         this.closeLightbox = () => {
           clearTimeout(delayedLoad);
+          // Remove touch listeners to prevent interference
+          lightboxImage.removeEventListener('touchstart', this.touchStartHandler);
           this.closeLightbox = originalCloseLightbox; // Restore original
           originalCloseLightbox();
         };
@@ -618,12 +623,20 @@ class PhotoGallery {
     // Also preload on scroll for mobile - start loading next batch earlier
     if (isMobile) {
       let scrollTimeout;
-      window.addEventListener('scroll', () => {
+      const scrollHandler = () => {
+        // Don't preload if lightbox is open
+        const lightbox = document.getElementById('lightbox');
+        if (lightbox && !lightbox.classList.contains('hidden')) {
+          return;
+        }
+        
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
           this.preloadOnScroll();
         }, 100);
-      }, { passive: true });
+      };
+      
+      window.addEventListener('scroll', scrollHandler, { passive: true });
     }
 
     // Observe all lazy image containers
