@@ -442,8 +442,10 @@ class PhotoGallery {
 
     if (lightbox && lightboxImage && this.photos[index]) {
       const photo = this.photos[index];
-      // Use the original public variant for lightbox
-      const fullSizeVariant = photo.variants.find(v => v.includes('public')) || photo.variants[0];
+      // Use high-resolution variant for lightbox to prevent pixelation when zooming
+      const baseUrl = photo.variants.find(v => v.includes('public')) || photo.variants[0];
+      // Request higher resolution for mobile zoom - up to 2560px wide for crisp zoom
+      const fullSizeVariant = baseUrl.replace('/public', '/w=2560,f=auto,q=95');
       
       lightboxImage.src = fullSizeVariant;
       lightbox.classList.remove('hidden');
