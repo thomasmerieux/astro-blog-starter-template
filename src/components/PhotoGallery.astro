@@ -569,7 +569,9 @@ class PhotoGallery {
   }
 
   initLazyLoading() {
-    // Create Intersection Observer for lazy loading with aggressive preloading
+    // Create Intersection Observer with mobile-optimized settings
+    const isMobile = window.innerWidth < 640;
+    
     const imageObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -581,10 +583,23 @@ class PhotoGallery {
         }
       });
     }, {
-      // Start loading when image is 500px away from viewport for faster perceived loading
-      rootMargin: '500px 0px',
+      // More aggressive preloading on mobile due to single column scrolling
+      rootMargin: isMobile ? '800px 0px' : '500px 0px',
       threshold: 0.01
     });
+    
+    console.log(`Lazy loading with ${isMobile ? '800px' : '500px'} rootMargin`);
+    
+    // Also preload on scroll for mobile - start loading next batch earlier
+    if (isMobile) {
+      let scrollTimeout;
+      window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          this.preloadOnScroll();
+        }, 100);
+      }, { passive: true });
+    }
 
     // Observe all lazy image containers
     document.querySelectorAll('.lazy-image-container').forEach(container => {
@@ -641,9 +656,15 @@ class PhotoGallery {
   }
 
   preloadFirstImages() {
-    // Preload first 8 images (first 2 rows on desktop) for instant display
+    // More aggressive preloading for mobile - preload more images upfront
     const firstImages = document.querySelectorAll('.lazy-image-container');
-    const preloadCount = Math.min(8, firstImages.length);
+    
+    // Mobile: preload first 15 images (single column = more vertical scrolling)
+    // Desktop: preload first 12 images (multiple columns)
+    const isMobile = window.innerWidth < 640;
+    const preloadCount = Math.min(isMobile ? 15 : 12, firstImages.length);
+    
+    console.log(`Preloading ${preloadCount} images for ${isMobile ? 'mobile' : 'desktop'}`);
     
     for (let i = 0; i < preloadCount; i++) {
       const container = firstImages[i];
@@ -652,6 +673,29 @@ class PhotoGallery {
         this.loadImage(container, imageSrc);
       }
     }
+  }
+
+  preloadOnScroll() {
+    // Find images that are close to viewport and not yet loaded
+    const containers = document.querySelectorAll('.lazy-image-container');
+    const viewportHeight = window.innerHeight;
+    const scrollTop = window.scrollY;
+    
+    containers.forEach(container => {
+      // Skip if already loaded (has img element)
+      if (container.querySelector('img')) return;
+      
+      const rect = container.getBoundingClientRect();
+      const distanceFromViewport = rect.top + scrollTop - (scrollTop + viewportHeight);
+      
+      // Preload if within 1200px of becoming visible
+      if (distanceFromViewport < 1200) {
+        const imageSrc = container.dataset.src;
+        if (imageSrc) {
+          this.loadImage(container, imageSrc);
+        }
+      }
+    });
   }
 
   setupMobileGestures(lightbox) {
