@@ -94,9 +94,14 @@ export const POST: APIRoute = async ({ request }) => {
     // Upload to Cloudflare Images for processing/variants
     const imagesFormData = new FormData();
     imagesFormData.append('file', file);
+    
+    // Get order from form data if provided
+    const order = formData.get('order') || Date.now().toString();
+    
     imagesFormData.append('metadata', JSON.stringify({
       originalFileName: fileName,
-      r2Key: fileName
+      r2Key: fileName,
+      order: order
     }));
 
     const imagesResponse = await fetch(

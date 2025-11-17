@@ -44,6 +44,80 @@ export const prerender = false;
     <!-- Page Content -->
     <div class="flex-1 flex justify-center">
       <div class="w-full max-w-7xl">
+        <!-- Grid Size Controls -->
+        <div class="flex justify-between items-center mb-6">
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-600">Grid size:</span>
+            <div class="flex space-x-1 bg-gray-100 rounded-lg p-1">
+              <button id="grid-3" class="grid-size-btn px-3 py-1 text-sm rounded transition-colors" data-size="3">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 15 15">
+                  <rect x="1" y="1" width="3.5" height="3.5"/>
+                  <rect x="5.5" y="1" width="3.5" height="3.5"/>
+                  <rect x="10" y="1" width="3.5" height="3.5"/>
+                  <rect x="1" y="5.5" width="3.5" height="3.5"/>
+                  <rect x="5.5" y="5.5" width="3.5" height="3.5"/>
+                  <rect x="10" y="5.5" width="3.5" height="3.5"/>
+                  <rect x="1" y="10" width="3.5" height="3.5"/>
+                  <rect x="5.5" y="10" width="3.5" height="3.5"/>
+                  <rect x="10" y="10" width="3.5" height="3.5"/>
+                </svg>
+              </button>
+              <button id="grid-4" class="grid-size-btn px-3 py-1 text-sm rounded transition-colors bg-gray-800 text-white" data-size="4">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 17 17">
+                  <rect x="1" y="1" width="3" height="3"/>
+                  <rect x="5" y="1" width="3" height="3"/>
+                  <rect x="9" y="1" width="3" height="3"/>
+                  <rect x="13" y="1" width="3" height="3"/>
+                  <rect x="1" y="5" width="3" height="3"/>
+                  <rect x="5" y="5" width="3" height="3"/>
+                  <rect x="9" y="5" width="3" height="3"/>
+                  <rect x="13" y="5" width="3" height="3"/>
+                  <rect x="1" y="9" width="3" height="3"/>
+                  <rect x="5" y="9" width="3" height="3"/>
+                  <rect x="9" y="9" width="3" height="3"/>
+                  <rect x="13" y="9" width="3" height="3"/>
+                  <rect x="1" y="13" width="3" height="3"/>
+                  <rect x="5" y="13" width="3" height="3"/>
+                  <rect x="9" y="13" width="3" height="3"/>
+                  <rect x="13" y="13" width="3" height="3"/>
+                </svg>
+              </button>
+              <button id="grid-5" class="grid-size-btn px-3 py-1 text-sm rounded transition-colors" data-size="5">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 12 12">
+                  <rect x="1" y="1" width="1.5" height="1.5"/>
+                  <rect x="3" y="1" width="1.5" height="1.5"/>
+                  <rect x="5" y="1" width="1.5" height="1.5"/>
+                  <rect x="7" y="1" width="1.5" height="1.5"/>
+                  <rect x="9" y="1" width="1.5" height="1.5"/>
+                  <rect x="1" y="3" width="1.5" height="1.5"/>
+                  <rect x="3" y="3" width="1.5" height="1.5"/>
+                  <rect x="5" y="3" width="1.5" height="1.5"/>
+                  <rect x="7" y="3" width="1.5" height="1.5"/>
+                  <rect x="9" y="3" width="1.5" height="1.5"/>
+                  <rect x="1" y="5" width="1.5" height="1.5"/>
+                  <rect x="3" y="5" width="1.5" height="1.5"/>
+                  <rect x="5" y="5" width="1.5" height="1.5"/>
+                  <rect x="7" y="5" width="1.5" height="1.5"/>
+                  <rect x="9" y="5" width="1.5" height="1.5"/>
+                  <rect x="1" y="7" width="1.5" height="1.5"/>
+                  <rect x="3" y="7" width="1.5" height="1.5"/>
+                  <rect x="5" y="7" width="1.5" height="1.5"/>
+                  <rect x="7" y="7" width="1.5" height="1.5"/>
+                  <rect x="9" y="7" width="1.5" height="1.5"/>
+                  <rect x="1" y="9" width="1.5" height="1.5"/>
+                  <rect x="3" y="9" width="1.5" height="1.5"/>
+                  <rect x="5" y="9" width="1.5" height="1.5"/>
+                  <rect x="7" y="9" width="1.5" height="1.5"/>
+                  <rect x="9" y="9" width="1.5" height="1.5"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="text-sm text-gray-500">
+            <span id="photo-count">0</span> photos
+          </div>
+        </div>
+
         <div id="photo-gallery" class="w-full">
   <!-- Loading State -->
   <div id="loading" class="text-center py-12">
@@ -60,7 +134,7 @@ export const prerender = false;
   </div>
 
   <!-- Photo Grid -->
-  <div id="photo-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 hidden">
+  <div id="photo-grid" class="photo-grid gap-4 hidden" data-size="4">
     <!-- Photos will be dynamically inserted here -->
   </div>
 
@@ -135,11 +209,72 @@ export const prerender = false;
   </div>
 </div>
 
+<style>
+/* Grid size variations */
+.photo-grid {
+  display: grid;
+}
+
+
+.photo-grid[data-size="3"] {
+  grid-template-columns: repeat(1, 1fr);
+}
+@media (min-width: 640px) {
+  .photo-grid[data-size="3"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .photo-grid[data-size="3"] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.photo-grid[data-size="4"] {
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 640px) {
+  .photo-grid[data-size="4"] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .photo-grid[data-size="4"] {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.photo-grid[data-size="5"] {
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 640px) {
+  .photo-grid[data-size="5"] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 768px) {
+  .photo-grid[data-size="5"] {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .photo-grid[data-size="5"] {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Button styles */
+.grid-size-btn:not(.bg-gray-800) {
+  @apply text-gray-600 hover:bg-gray-200;
+}
+</style>
+
 <script>
 class PhotoGallery {
   constructor() {
     this.photos = [];
     this.currentLightboxIndex = 0;
+    this.currentGridSize = this.getStoredGridSize();
     this.init();
   }
 
@@ -154,6 +289,14 @@ class PhotoGallery {
     if (retryBtn) {
       retryBtn.addEventListener('click', () => this.loadPhotos());
     }
+
+    // Grid size buttons
+    document.querySelectorAll('.grid-size-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const size = e.currentTarget.dataset.size;
+        this.setGridSize(size);
+      });
+    });
 
     // Lightbox controls
     const lightboxClose = document.getElementById('lightbox-close');
@@ -228,6 +371,8 @@ class PhotoGallery {
       } else {
         this.renderPhotos();
         photoGrid.classList.remove('hidden');
+        this.updatePhotoCount();
+        this.initGridSize();
       }
     } catch (err) {
       loading.classList.add('hidden');
@@ -241,10 +386,8 @@ class PhotoGallery {
     if (!photoGrid) return;
 
     photoGrid.innerHTML = this.photos.map((photo, index) => {
-      // Find the best thumbnail variant (prefer smaller sizes for grid display)
-      const thumbnailUrl = photo.variants.find(v => v.includes('thumbnail')) || 
-                          photo.variants.find(v => v.includes('public')) || 
-                          photo.variants[0];
+      // Use the original public variant URL
+      const thumbnailUrl = photo.variants.find(v => v.includes('public')) || photo.variants[0];
 
       return `
         <div class="photo-item group cursor-pointer" data-index="${index}">
@@ -273,6 +416,9 @@ class PhotoGallery {
 
     // Initialize lazy loading
     this.initLazyLoading();
+    
+    // Preload first few images for instant display
+    this.preloadFirstImages();
   }
 
   openLightbox(index) {
@@ -286,7 +432,7 @@ class PhotoGallery {
 
     if (lightbox && lightboxImage && this.photos[index]) {
       const photo = this.photos[index];
-      // Use the highest quality variant available for lightbox
+      // Use the original public variant for lightbox
       const fullSizeVariant = photo.variants.find(v => v.includes('public')) || photo.variants[0];
       
       lightboxImage.src = fullSizeVariant;
@@ -331,7 +477,7 @@ class PhotoGallery {
   }
 
   initLazyLoading() {
-    // Create Intersection Observer for lazy loading
+    // Create Intersection Observer for lazy loading with aggressive preloading
     const imageObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -343,8 +489,8 @@ class PhotoGallery {
         }
       });
     }, {
-      // Start loading when image is 200px away from viewport
-      rootMargin: '200px 0px',
+      // Start loading when image is 500px away from viewport for faster perceived loading
+      rootMargin: '500px 0px',
       threshold: 0.01
     });
 
@@ -400,6 +546,57 @@ class PhotoGallery {
 
     // Start loading the image
     img.src = src;
+  }
+
+  preloadFirstImages() {
+    // Preload first 8 images (first 2 rows on desktop) for instant display
+    const firstImages = document.querySelectorAll('.lazy-image-container');
+    const preloadCount = Math.min(8, firstImages.length);
+    
+    for (let i = 0; i < preloadCount; i++) {
+      const container = firstImages[i];
+      const imageSrc = container.dataset.src;
+      if (imageSrc) {
+        this.loadImage(container, imageSrc);
+      }
+    }
+  }
+
+  getStoredGridSize() {
+    return localStorage.getItem('photoGalleryGridSize') || '4';
+  }
+
+  setGridSize(size) {
+    this.currentGridSize = size;
+    localStorage.setItem('photoGalleryGridSize', size);
+    
+    // Update grid data attribute
+    const photoGrid = document.getElementById('photo-grid');
+    if (photoGrid) {
+      photoGrid.setAttribute('data-size', size);
+    }
+    
+    // Update button states
+    document.querySelectorAll('.grid-size-btn').forEach(btn => {
+      if (btn.dataset.size === size) {
+        btn.classList.add('bg-gray-800', 'text-white');
+        btn.classList.remove('text-gray-600');
+      } else {
+        btn.classList.remove('bg-gray-800', 'text-white');
+        btn.classList.add('text-gray-600');
+      }
+    });
+  }
+
+  initGridSize() {
+    this.setGridSize(this.currentGridSize);
+  }
+
+  updatePhotoCount() {
+    const photoCount = document.getElementById('photo-count');
+    if (photoCount) {
+      photoCount.textContent = this.photos.length;
+    }
   }
 
   async downloadOriginal() {

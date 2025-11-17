@@ -5,11 +5,7 @@ import { languages } from '../../i18n/ui';
 import { useTranslations } from '../../i18n/utils';
 import type { Languages } from '../../types';
 
-export function getStaticPaths() {
-  return Object.keys(languages).map((lang) => ({
-    params: { lang },
-  }));
-}
+// Dynamic page - no getStaticPaths needed with prerender = false
 
 const { lang } = Astro.params;
 const t = useTranslations(lang as Languages);
