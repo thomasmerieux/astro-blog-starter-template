@@ -218,9 +218,11 @@ export const prerender = false;
 </div>
 
 <style>
-/* Grid size variations */
+/* Grid size variations with performance optimizations */
 .photo-grid {
   display: grid;
+  contain: layout style;
+  transform: translateZ(0); /* Force GPU layer */
 }
 
 
@@ -270,6 +272,29 @@ export const prerender = false;
 /* Button styles */
 .grid-size-btn:not(.bg-gray-800) {
   @apply text-gray-600 hover:bg-gray-200;
+}
+
+/* Mobile scrolling optimizations */
+@media (max-width: 640px) {
+  .photo-item {
+    contain: layout style;
+    will-change: auto;
+  }
+  
+  .lazy-image-container {
+    contain: layout;
+  }
+  
+  /* Prevent reflows during image loading */
+  .lazy-placeholder {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+  
+  /* Smooth scrolling on mobile */
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
 }
 </style>
 
@@ -404,7 +429,7 @@ class PhotoGallery {
 
       return `
         <div class="photo-item group cursor-pointer" data-index="${index}">
-          <div class="relative overflow-hidden rounded-lg aspect-square bg-gray-200">
+          <div class="relative overflow-hidden rounded-lg aspect-square bg-gray-200 will-change-transform">
             <div class="lazy-image-container w-full h-full" data-src="${thumbnailUrl}">
               <div class="lazy-placeholder w-full h-full flex items-center justify-center">
                 <div class="animate-pulse bg-gray-300 w-full h-full rounded-lg"></div>
@@ -611,44 +636,62 @@ class PhotoGallery {
     const img = new Image();
     
     img.onload = () => {
-      // Replace placeholder with actual image
-      container.innerHTML = `
-        <img
-          src="${src}"
-          alt="Wedding photo"
-          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 opacity-0"
-        />
-      `;
-      
-      const imgElement = container.querySelector('img');
-      
-      // Fade in the image
-      requestAnimationFrame(() => {
-        imgElement.style.opacity = '1';
-        imgElement.style.transition = 'opacity 0.3s ease-in-out';
-      });
-
-      // Add error handling
-      imgElement.addEventListener('error', () => {
-        container.innerHTML = `
-          <div class="w-full h-full flex items-center justify-center text-gray-400">
-            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-            </svg>
-          </div>
-        `;
-      });
+      // Use transform instead of innerHTML to avoid layout shift
+      const placeholder = container.querySelector('.lazy-placeholder');
+      if (placeholder) {
+        // Create image element with proper containment
+        const imgElement = document.createElement('img');
+        imgElement.src = src;
+        imgElement.alt = 'Wedding photo';
+        imgElement.className = 'w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 will-change-transform';
+        imgElement.style.opacity = '0';
+        imgElement.style.transform = 'translateZ(0)'; // Force GPU acceleration
+        
+        // Insert image and fade out placeholder
+        container.appendChild(imgElement);
+        
+        // Use requestAnimationFrame for smooth transition
+        requestAnimationFrame(() => {
+          imgElement.style.transition = 'opacity 0.2s ease-out';
+          imgElement.style.opacity = '1';
+          placeholder.style.transition = 'opacity 0.2s ease-out';
+          placeholder.style.opacity = '0';
+          
+          // Remove placeholder after transition
+          setTimeout(() => {
+            if (placeholder && placeholder.parentNode) {
+              placeholder.remove();
+            }
+          }, 200);
+        });
+        
+        // Add error handling
+        imgElement.addEventListener('error', () => {
+          imgElement.remove();
+          placeholder.style.opacity = '1';
+          placeholder.innerHTML = `
+            <div class="w-full h-full flex items-center justify-center text-gray-400">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+          `;
+        });
+      }
     };
 
     img.onerror = () => {
       // Show error placeholder
-      container.innerHTML = `
-        <div class="w-full h-full flex items-center justify-center text-gray-400">
-          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-          </svg>
-        </div>
-      `;
+      const placeholder = container.querySelector('.lazy-placeholder');
+      if (placeholder) {
+        placeholder.innerHTML = `
+          <div class="w-full h-full flex items-center justify-center text-gray-400">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+        `;
+      }
     };
 
     // Start loading the image
