@@ -44,8 +44,8 @@ export const prerender = false;
     <!-- Page Content -->
     <div class="flex-1 flex justify-center">
       <div class="w-full max-w-7xl">
-        <!-- Grid Size Controls -->
-        <div class="flex justify-between items-center mb-6">
+        <!-- Grid Size Controls - Hidden on mobile -->
+        <div class="hidden sm:flex justify-between items-center mb-6">
           <div class="flex items-center space-x-2">
             <span class="text-sm text-gray-600">Grid size:</span>
             <div class="flex space-x-1 bg-gray-100 rounded-lg p-1">
@@ -115,6 +115,13 @@ export const prerender = false;
           </div>
           <div class="text-sm text-gray-500">
             <span id="photo-count">0</span> photos
+          </div>
+        </div>
+        
+        <!-- Mobile photo count - visible only on mobile -->
+        <div class="sm:hidden flex justify-end mb-4">
+          <div class="text-sm text-gray-500">
+            <span id="photo-count-mobile">0</span> photos
           </div>
         </div>
 
@@ -217,9 +224,11 @@ export const prerender = false;
 }
 
 
-.photo-grid[data-size="3"] {
+/* Mobile: Always single column, Desktop: User choice */
+.photo-grid {
   grid-template-columns: repeat(1, 1fr);
 }
+
 @media (min-width: 640px) {
   .photo-grid[data-size="3"] {
     grid-template-columns: repeat(2, 1fr);
@@ -231,9 +240,6 @@ export const prerender = false;
   }
 }
 
-.photo-grid[data-size="4"] {
-  grid-template-columns: repeat(2, 1fr);
-}
 @media (min-width: 640px) {
   .photo-grid[data-size="4"] {
     grid-template-columns: repeat(3, 1fr);
@@ -245,9 +251,6 @@ export const prerender = false;
   }
 }
 
-.photo-grid[data-size="5"] {
-  grid-template-columns: repeat(2, 1fr);
-}
 @media (min-width: 640px) {
   .photo-grid[data-size="5"] {
     grid-template-columns: repeat(3, 1fr);
@@ -765,8 +768,13 @@ class PhotoGallery {
 
   updatePhotoCount() {
     const photoCount = document.getElementById('photo-count');
+    const photoCountMobile = document.getElementById('photo-count-mobile');
+    
     if (photoCount) {
       photoCount.textContent = this.photos.length;
+    }
+    if (photoCountMobile) {
+      photoCountMobile.textContent = this.photos.length;
     }
   }
 
