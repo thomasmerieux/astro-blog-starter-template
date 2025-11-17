@@ -213,7 +213,7 @@ class PhotoGallery {
     emptyState.classList.add('hidden');
 
     try {
-      const response = await fetch('/api/photos?per_page=100');
+      const response = await fetch('/api/photos?per_page=400');
       if (!response.ok) {
         throw new Error('Failed to fetch photos');
       }
