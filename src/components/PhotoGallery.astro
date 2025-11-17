@@ -442,10 +442,89 @@ class PhotoGallery {
 
     if (lightbox && lightboxImage && this.photos[index]) {
       const photo = this.photos[index];
-      // Use the original public variant for lightbox (revert to working version)
-      const fullSizeVariant = photo.variants.find(v => v.includes('public')) || photo.variants[0];
+      // Try different Cloudflare Images variant formats to find one that works
+      const baseUrl = photo.variants.find(v => v.includes('public')) || photo.variants[0];
+      const urlParts = baseUrl.split('/');
       
-      lightboxImage.src = fullSizeVariant;
+      let fullSizeVariant = baseUrl; // Default fallback
+      
+      if (urlParts.length >= 6) {
+        const accountHash = urlParts[3];
+        const imageId = urlParts[4];
+        
+        // Try various Cloudflare Images variant formats
+        const variantFormats = [
+          'width=2560',           // Standard width parameter
+          'w=2560',              // Short width parameter  
+          'scale-down',          // Built-in variant
+          'public'               // Original working variant
+        ];
+        
+        // For now, let's try the most common format: width=2560
+        fullSizeVariant = `https://imagedelivery.net/${accountHash}/${imageId}/width=2560`;
+        console.log('Trying variant URL:', fullSizeVariant);
+      }
+      
+      // Smart loading: show standard quality first, upgrade only when needed
+      
+      // Step 1: Immediately show the original resolution (fast)
+      lightboxImage.src = baseUrl;
+      lightboxImage.style.opacity = '1';
+      
+      // Step 2: Set up high-res loading triggers
+      if (fullSizeVariant !== baseUrl) {
+        let highResLoaded = false;
+        let highResLoading = false;
+        
+        const loadHighRes = () => {
+          if (highResLoading || highResLoaded) return;
+          
+          console.log('Loading high-res version...');
+          highResLoading = true;
+          
+          const highResImg = new Image();
+          
+          highResImg.onload = () => {
+            console.log('High-res loaded, upgrading image quality');
+            highResLoaded = true;
+            
+            // Very subtle transition
+            lightboxImage.style.transition = 'opacity 0.1s ease';
+            lightboxImage.style.opacity = '0.98';
+            
+            setTimeout(() => {
+              lightboxImage.src = fullSizeVariant;
+              lightboxImage.style.opacity = '1';
+            }, 50);
+          };
+          
+          highResImg.onerror = () => {
+            console.log('High-res variant failed, staying with original quality');
+            highResLoading = false;
+          };
+          
+          highResImg.src = fullSizeVariant;
+        };
+        
+        // Trigger 1: Load high-res after 2 seconds of viewing
+        const delayedLoad = setTimeout(loadHighRes, 2000);
+        
+        // Trigger 2: Load high-res on any touch interaction (pinch, zoom gestures)
+        lightboxImage.addEventListener('touchstart', (e) => {
+          if (e.touches.length >= 2) { // Multi-touch = likely zoom
+            clearTimeout(delayedLoad);
+            loadHighRes();
+          }
+        });
+        
+        // Clean up timeout if user closes lightbox
+        const originalCloseLightbox = this.closeLightbox.bind(this);
+        this.closeLightbox = () => {
+          clearTimeout(delayedLoad);
+          this.closeLightbox = originalCloseLightbox; // Restore original
+          originalCloseLightbox();
+        };
+      }
       lightbox.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
 
