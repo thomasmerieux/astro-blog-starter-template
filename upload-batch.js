@@ -3,7 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 
-async function uploadPhotosInOrder(folderPath) {
+async function uploadPhotosInOrder(folderPath, collection) {
   // Get all image files and sort them in reverse order
   const files = fs.readdirSync(folderPath)
     .filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file))
@@ -11,6 +11,7 @@ async function uploadPhotosInOrder(folderPath) {
     .reverse(); // Upload in reverse alphabetical order
 
   console.log(`Found ${files.length} photos to upload`);
+  console.log(`Collection: ${collection}`);
 
   // Test server connection first
   try {
@@ -53,6 +54,7 @@ async function uploadPhotosInOrder(folderPath) {
       const orderedName = `${String(i + 1).padStart(3, '0')}_${file}`;
       formData.append('file', blob, orderedName);
       formData.append('order', String(i + 1).padStart(3, '0'));
+      formData.append('collection', collection);
       
       const response = await fetch('http://localhost:4321/api/photos', {
         method: 'POST',
@@ -80,11 +82,14 @@ async function uploadPhotosInOrder(folderPath) {
   console.log('🎉 Upload batch completed!');
 }
 
-// Usage: node upload-batch.js /path/to/your/photos
+// Usage: node upload-batch.js /path/to/your/photos <collection>
 const photoFolder = process.argv[2];
-if (!photoFolder) {
-  console.error('Usage: node upload-batch.js /path/to/photos/folder');
+const collection = process.argv[3];
+
+if (!photoFolder || !collection) {
+  console.error('Usage: node upload-batch.js /path/to/photos/folder <collection>');
+  console.error('Example: node upload-batch.js ./photos wedding');
   process.exit(1);
 }
 
-uploadPhotosInOrder(photoFolder);
+uploadPhotosInOrder(photoFolder, collection);
