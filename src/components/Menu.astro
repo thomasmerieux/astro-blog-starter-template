@@ -85,6 +85,15 @@ const { lang = 'en', t } = Astro.props;
         </li>
         <li>
           <a
+            href={lang === 'en' ? '/photos' : `/${lang}/photos`}
+            class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
+            role="menuitem"
+          >
+            {t('nav.photos')}
+          </a>
+        </li>
+        <li>
+          <a
             href={lang === 'en' ? '/contact' : `/${lang}/contact`}
             class="text-lg hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
             role="menuitem"
@@ -150,6 +159,15 @@ const { lang = 'en', t } = Astro.props;
             role="menuitem"
           >
             {t('nav.rsvp')}
+          </a>
+        </li>
+        <li>
+          <a
+            href={lang === 'en' ? '/photos' : `/${lang}/photos`}
+            class="text-base hover:text-gray-600 transition-colors uppercase tracking-wide whitespace-nowrap"
+            role="menuitem"
+          >
+            {t('nav.photos')}
           </a>
         </li>
         <li>
@@ -237,6 +255,9 @@ const { lang = 'en', t } = Astro.props;
     >
     <a href={lang === 'en' ? '/rsvp' : `/${lang}/rsvp`} class="mobile-link" role="menuitem"
       >{t('nav.rsvp')}</a
+    >
+    <a href={lang === 'en' ? '/photos' : `/${lang}/photos`} class="mobile-link" role="menuitem"
+      >{t('nav.photos')}</a
     >
     <a href={lang === 'en' ? '/contact' : `/${lang}/contact`} class="mobile-link" role="menuitem"
       >{t('nav.contact')}</a
